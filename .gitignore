@@ -29,3 +29,11 @@ data/
 # OS
 .DS_Store
 Thumbs.db
+
+# Coverage
+.coverage
+htmlcov/
+
+# Caches
+.mypy_cache/
+.ruff_cache/
