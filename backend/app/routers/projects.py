@@ -1,22 +1,34 @@
-from fastapi import APIRouter, HTTPException
+from collections.abc import Sequence
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session, select
+
+from app.database import get_session
+from app.models import Project
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
-PROJECTS = [
-    {"id": 1, "title": "Portfolio", "tags": ["fastapi", "vuejs3", "tailwindcss"]},
-    {"id": 2, "title": "Cinema scraper", "tags": ["requests", "sqlmodel"]},
-]
-
 
 @router.get("")
-def get_projects() -> list[dict]:
-    return PROJECTS
+def list_projects(session: Session = Depends(get_session)) -> Sequence[Project]:
+    statement = select(Project).where(Project.published == True)
+    return session.exec(statement).all()
 
 
-@router.get("/{project_id}")
-def get_project(project_id: int) -> dict:
-    project = next((p for p in PROJECTS if p["id"] == project_id), None)
-
+@router.get("/{slug}")
+def get_project(slug: str, session: Session = Depends(get_session)) -> Project:
+    statement = select(Project).where(Project.slug == slug)
+    project = session.exec(statement).first()
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+
+@router.post("")
+def create_project(
+    project: Project, session: Session = Depends(get_session)
+) -> Project:
+    session.add(project)
+    session.commit()
+    session.refresh(project)
     return project

@@ -6,6 +6,7 @@ requires-python = ">=3.12.8"
 dependencies = [
     "fastapi[standard]>=0.128.7",
     "pydantic-settings>=2.12.0",
+    "sqlmodel>=0.0.32",
 ]
 
 [dependency-groups]
@@ -38,10 +39,14 @@ ignore = [
     "E501",   # line too long (le formatter s'en charge)
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"**/routers/*" = ["B008", "E712"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
 
 [tool.mypy]
+plugins = ["pydantic.mypy"]
 python_version = "3.12"
 cache_dir = "backend/.mypy_cache"
 warn_return_any = true
