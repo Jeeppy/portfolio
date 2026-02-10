@@ -1,30 +1,15 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 
-app = FastAPI(title="Portfolio API")
+from app.config import get_settings
+from app.routers import projects
 
-PROJECTS = [
-    {"id": 1, "title": "Portfolio", "tags": ["fastapi", "vuejs3", "tailwindcss"]},
-    {"id": 2, "title": "Cinema scraper", "tags": ["requests", "sqlmodel"]},
-]
+settings = get_settings()
+
+app = FastAPI(title="Portfolio API", debug=settings.debug)
+
+app.include_router(projects.router, prefix=settings.api_prefix)
 
 
 @app.get("/")
-def root():
-    return {"message:" "Hello Portfolio!"}
-
-
-@app.get("/api/projects")
-def get_projects():
-    return PROJECTS
-
-
-@app.get("/api/projects/{project_id}")
-def get_project(project_id: int):
-    project = next(
-        (project for project in PROJECTS if project["id"] == project_id), None
-    )
-
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    return project
+def root() -> dict[str, str]:
+    return {"message": "Hello Portfolio!"}
