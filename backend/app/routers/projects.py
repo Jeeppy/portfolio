@@ -7,7 +7,7 @@ from sqlmodel import Session, select
 
 from app.auth import get_current_admin
 from app.database import get_session
-from app.models import Project
+from app.models import Project, Tag
 from app.schemas import ProjectCreate, ProjectRead, ProjectUpdate
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -32,7 +32,16 @@ def create_project(
     _: str = Depends(get_current_admin),
 ) -> Project:
     try:
-        project = Project(**data.model_dump())
+        project = Project(**data.model_dump(exclude={"tags"}))
+
+        for tag_name in data.tags:
+            tag: Tag | None = session.exec(
+                select(Tag).where(Tag.name == tag_name)
+            ).first()
+            if tag is None:
+                tag = Tag(name=tag_name)
+            project.tags.append(tag)
+
         session.add(project)
         session.commit()
         session.refresh(project)
@@ -60,8 +69,20 @@ def update_project(
     project = _get_project_or_404(slug, session)
 
     update_data = data.model_dump(exclude_unset=True)
+    tag_names = update_data.pop("tags", None)
+
     for key, value in update_data.items():
         setattr(project, key, value)
+
+    if tag_names is not None:
+        project.tags.clear()
+        for tag_data in tag_names:
+            tag: Tag | None = session.exec(
+                select(Tag).where(Tag.name == tag_data["name"])
+            ).first()
+            if tag is None:
+                tag = Tag(name=tag_data["name"])
+            project.tags.append(tag)
 
     session.add(project)
     session.commit()

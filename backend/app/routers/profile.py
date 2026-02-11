@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 from app.auth import get_current_admin
 from app.database import get_session
-from app.models import Profile
+from app.models import Education, Experience, Profile, Skill
 from app.schemas import ProfileRead, ProfileUpdate
 
 router = APIRouter(prefix="/profile", tags=["profile"])
@@ -24,9 +24,32 @@ def update_profile(
 ) -> Profile:
     profile = _get_or_create_profile(session)
 
-    update_data = data.model_dump(exclude_unset=True)
+    update_data = data.model_dump(exclude_unset=True, mode="json")
+    skills_data = update_data.pop("skills", None)
+    experiences_data = update_data.pop("experiences", None)
+    education_data = update_data.pop("education", None)
+
     for key, value in update_data.items():
         setattr(profile, key, value)
+
+    if skills_data is not None:
+        for skill in profile.skills:
+            session.delete(skill)
+        profile.skills = [Skill(**s, profile_id=profile.id) for s in skills_data]
+
+    if experiences_data is not None:
+        for exp in profile.experiences:
+            session.delete(exp)
+        profile.experiences = [
+            Experience(**e, profile_id=profile.id) for e in experiences_data
+        ]
+
+    if education_data is not None:
+        for edu in profile.education:
+            session.delete(edu)
+        profile.education = [
+            Education(**e, profile_id=profile.id) for e in education_data
+        ]
 
     session.add(profile)
     session.commit()
