@@ -8,7 +8,7 @@ class Project(SQLModel, table=True):
     title: str = Field(index=True)
     slug: str = Field(unique=True, index=True)
     description: str = ""
-    tags: str = "[]"  # JSON string
+    tags: str = "[]"
     published: bool = True
-    create_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    update_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
