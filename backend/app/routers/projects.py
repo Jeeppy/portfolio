@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
+from app.auth import get_current_admin
 from app.database import get_session
 from app.models import Project
 from app.schemas import ProjectCreate, ProjectRead, ProjectUpdate
@@ -24,7 +25,9 @@ def get_project(slug: str, session: Session = Depends(get_session)) -> Project:
 
 @router.post("", response_model=ProjectRead, status_code=201)
 def create_project(
-    data: ProjectCreate, session: Session = Depends(get_session)
+    data: ProjectCreate,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
 ) -> Project:
     try:
         project = Project(**data.model_dump())
@@ -41,7 +44,10 @@ def create_project(
 
 @router.put("/{slug}", response_model=ProjectRead)
 def update_project(
-    slug: str, data: ProjectUpdate, session: Session = Depends(get_session)
+    slug: str,
+    data: ProjectUpdate,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
 ) -> Project:
     project = _get_project_or_404(slug, session)
 
@@ -56,7 +62,11 @@ def update_project(
 
 
 @router.delete("/{slug}", status_code=204)
-def delete_project(slug: str, session: Session = Depends(get_session)) -> None:
+def delete_project(
+    slug: str,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> None:
     project = _get_project_or_404(slug, session)
 
     session.delete(project)

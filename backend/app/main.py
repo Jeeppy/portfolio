@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import projects
+from app.routers import auth, projects
 
 settings = get_settings()
 
@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
 app.include_router(projects.router, prefix=settings.api_prefix)
+app.include_router(auth.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

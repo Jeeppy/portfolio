@@ -28,3 +28,13 @@ class ProjectRead(BaseModel):
     published: bool
     created_at: datetime
     updated_at: datetime
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
