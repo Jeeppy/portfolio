@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
@@ -10,6 +11,7 @@ from app.models import Project
 from app.schemas import ProjectCreate, ProjectRead, ProjectUpdate
 
 router = APIRouter(prefix="/projects", tags=["projects"])
+logger = structlog.get_logger()
 
 
 @router.get("", response_model=list[ProjectRead])
@@ -34,9 +36,14 @@ def create_project(
         session.add(project)
         session.commit()
         session.refresh(project)
+
+        logger.info("Project created", slug=project.slug)
         return project
+
     except IntegrityError as error:
         session.rollback()
+
+        logger.warning("Duplicate project slug", slug=data.slug)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Project with this slug already exists.",
@@ -59,6 +66,8 @@ def update_project(
     session.add(project)
     session.commit()
     session.refresh(project)
+
+    logger.info("Project updated", slug=slug)
     return project
 
 
@@ -72,6 +81,7 @@ def delete_project(
 
     session.delete(project)
     session.commit()
+    logger.info("Project deleted", slug=slug)
 
 
 def _get_project_or_404(slug: str, session: Session) -> Project:

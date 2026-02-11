@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
@@ -9,6 +10,7 @@ from app.models import ContactMessage
 from app.schemas import ContactCreate, ContactRead
 
 router = APIRouter(prefix="/contact", tags=["contact"])
+logger = structlog.get_logger()
 
 
 @router.post("", response_model=ContactCreate, status_code=status.HTTP_201_CREATED)
@@ -19,6 +21,8 @@ def create_message(
     session.add(message)
     session.commit()
     session.refresh(message)
+
+    logger.info("Contact message received", sender=data.email)
     return message
 
 
@@ -47,4 +51,5 @@ def read_message(
     session.commit()
     session.refresh(message)
 
+    logger.info("Message marked as read", message_id=message_id)
     return message

@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 import bcrypt
+import structlog
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
@@ -9,6 +10,7 @@ from app.config import get_settings
 
 security = HTTPBearer()
 settings = get_settings()
+logger = structlog.get_logger()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
@@ -51,5 +53,6 @@ def get_current_admin(
         if email is None:
             raise credentials_exception
     except JWTError as error:
+        logger.warning("Invalid or expired token")
         raise credentials_exception from error
     return email

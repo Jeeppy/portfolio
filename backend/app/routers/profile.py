@@ -1,3 +1,4 @@
+import structlog
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
@@ -7,6 +8,7 @@ from app.models import Profile
 from app.schemas import ProfileRead, ProfileUpdate
 
 router = APIRouter(prefix="/profile", tags=["profile"])
+logger = structlog.get_logger()
 
 
 @router.get("", response_model=ProfileRead)
@@ -30,6 +32,7 @@ def update_profile(
     session.commit()
     session.refresh(profile)
 
+    logger.info("Profile updated")
     return profile
 
 
@@ -40,4 +43,5 @@ def _get_or_create_profile(session: Session) -> Profile:
         session.add(profile)
         session.commit()
         session.refresh(profile)
+        logger.info("Profile created")
     return profile
