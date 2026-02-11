@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import auth, projects
+from app.routers import auth, contact, profile, projects
 
 settings = get_settings()
 
@@ -21,6 +21,8 @@ app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
 app.include_router(projects.router, prefix=settings.api_prefix)
 app.include_router(auth.router, prefix=settings.api_prefix)
+app.include_router(profile.router, prefix=settings.api_prefix)
+app.include_router(contact.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

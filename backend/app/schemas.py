@@ -38,3 +38,50 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class ProfileRead(BaseModel):
+    id: int
+    full_name: str
+    title: str
+    bio: str
+    avatar_url: str
+    resume_url: str
+    location: str
+    email: str
+    github_url: str
+    linkedin_url: str
+    skills: str
+    experiences: str
+    education: str
+
+
+class ProfileUpdate(BaseModel):
+    full_name: str | None = None
+    title: str | None = None
+    bio: str | None = None
+    avatar_url: str | None = None
+    resume_url: str | None = None
+    location: str | None = None
+    email: str | None = None
+    github_url: str | None = None
+    linkedin_url: str | None = None
+    experiences: str | None = None
+    education: str | None = None
+
+
+class ContactCreate(BaseModel):
+    name: str
+    email: str
+    subject: str
+    message: str
+
+
+class ContactRead(BaseModel):
+    id: int
+    name: str
+    email: str
+    subject: str
+    message: str
+    read: bool
+    created_at: datetime
