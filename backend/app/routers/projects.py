@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
@@ -23,7 +23,7 @@ def get_project(slug: str, session: Session = Depends(get_session)) -> Project:
     return _get_project_or_404(slug, session)
 
 
-@router.post("", response_model=ProjectRead, status_code=201)
+@router.post("", response_model=ProjectRead, status_code=status.HTTP_201_CREATED)
 def create_project(
     data: ProjectCreate,
     session: Session = Depends(get_session),
@@ -38,7 +38,8 @@ def create_project(
     except IntegrityError as error:
         session.rollback()
         raise HTTPException(
-            status_code=409, detail="Project with this slug already exists."
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Project with this slug already exists.",
         ) from error
 
 
@@ -61,7 +62,7 @@ def update_project(
     return project
 
 
-@router.delete("/{slug}", status_code=204)
+@router.delete("/{slug}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(
     slug: str,
     session: Session = Depends(get_session),
@@ -77,5 +78,7 @@ def _get_project_or_404(slug: str, session: Session) -> Project:
     statement = select(Project).where(Project.slug == slug)
     project: Project | None = session.exec(statement).first()
     if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
+        )
     return project
