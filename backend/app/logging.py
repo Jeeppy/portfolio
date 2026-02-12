@@ -16,6 +16,7 @@ def setup_logging(debug: bool = False) -> None:
         structlog.processors.StackInfoRenderer(),
     ]
 
+    renderer: structlog.dev.ConsoleRenderer | structlog.processors.JSONRenderer
     if debug:
         # Dev: output lisible et coloré
         renderer = structlog.dev.ConsoleRenderer()

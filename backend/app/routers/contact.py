@@ -33,7 +33,7 @@ def list_messages(
     return session.exec(select(ContactMessage)).all()
 
 
-@router.patch("/{id}/read", response_model=ContactRead)
+@router.patch("/{message_id}/read", response_model=ContactRead)
 def read_message(
     message_id: int,
     session: Session = Depends(get_session),

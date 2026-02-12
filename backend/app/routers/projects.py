@@ -16,7 +16,7 @@ logger = structlog.get_logger()
 
 @router.get("", response_model=list[ProjectRead])
 def list_projects(session: Session = Depends(get_session)) -> Sequence[Project]:
-    statement = select(Project).where(Project.published == True)
+    statement = select(Project).where(Project.published is True)
     return session.exec(statement).all()
 
 
@@ -33,6 +33,7 @@ def create_project(
 ) -> Project:
     try:
         project = Project(**data.model_dump(exclude={"tags"}))
+        session.add(project)
 
         for tag_name in data.tags:
             tag: Tag | None = session.exec(
@@ -41,8 +42,6 @@ def create_project(
             if tag is None:
                 tag = Tag(name=tag_name)
             project.tags.append(tag)
-
-        session.add(project)
         session.commit()
         session.refresh(project)
 
@@ -76,12 +75,12 @@ def update_project(
 
     if tag_names is not None:
         project.tags.clear()
-        for tag_data in tag_names:
+        for tag_name in tag_names:
             tag: Tag | None = session.exec(
-                select(Tag).where(Tag.name == tag_data["name"])
+                select(Tag).where(Tag.name == tag_name)
             ).first()
             if tag is None:
-                tag = Tag(name=tag_data["name"])
+                tag = Tag(name=tag_name)
             project.tags.append(tag)
 
     session.add(project)

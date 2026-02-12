@@ -6,10 +6,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
-from app.config import get_settings
+from app.config import Settings, get_settings
 
 security = HTTPBearer()
-settings = get_settings()
 logger = structlog.get_logger()
 
 
@@ -25,7 +24,7 @@ def hash_password(password: str) -> str:
     return result
 
 
-def create_access_token(data: dict) -> str:
+def create_access_token(data: dict, settings: Settings) -> str:
     """Créé un JWT avec une expiration."""
     to_encode = data.copy()
     expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
@@ -38,6 +37,7 @@ def create_access_token(data: dict) -> str:
 
 def get_current_admin(
     credentials: HTTPAuthorizationCredentials = Depends(security),
+    settings: Settings = Depends(get_settings),
 ) -> str:
     """Vérifier le JWT et retourne l'email admin."""
     token = credentials.credentials

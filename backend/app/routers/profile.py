@@ -24,7 +24,7 @@ def update_profile(
 ) -> Profile:
     profile = _get_or_create_profile(session)
 
-    update_data = data.model_dump(exclude_unset=True, mode="json")
+    update_data = data.model_dump(exclude_unset=True)
     skills_data = update_data.pop("skills", None)
     experiences_data = update_data.pop("experiences", None)
     education_data = update_data.pop("education", None)

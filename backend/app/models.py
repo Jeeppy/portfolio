@@ -67,7 +67,7 @@ class Skill(SQLModel, table=True):
     level: int = 0
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
-    profile: "Profile | None" = Relationship(back_populates="skills")
+    profile: Profile | None = Relationship(back_populates="skills")
 
 
 class Experience(SQLModel, table=True):
@@ -80,7 +80,7 @@ class Experience(SQLModel, table=True):
     end_date: date | None = None
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
-    profile: "Profile | None" = Relationship(back_populates="experiences")
+    profile: Profile | None = Relationship(back_populates="experiences")
 
 
 class Education(SQLModel, table=True):
@@ -91,4 +91,4 @@ class Education(SQLModel, table=True):
     year: int
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
-    profile: "Profile | None" = Relationship(back_populates="education")
+    profile: Profile | None = Relationship(back_populates="education")
