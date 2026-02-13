@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
-from app.auth import get_current_admin
+from app.auth import get_current_admin, get_optional_admin
 from app.config import Settings, get_settings
 from app.database import get_session
 from app.main import app
@@ -56,6 +56,7 @@ def admin_client(client: TestClient) -> Generator[TestClient]:
         return "admin@test.com"
 
     app.dependency_overrides[get_current_admin] = _fake_admin
+    app.dependency_overrides[get_optional_admin] = _fake_admin
     yield client
     app.dependency_overrides.clear()
 

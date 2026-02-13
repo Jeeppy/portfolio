@@ -21,11 +21,60 @@ def project(session: Session) -> Project:
     return project
 
 
+@pytest.fixture
+def unpublished_project(session: Session) -> Project:
+    unpublished = Project(
+        title="draft",
+        slug="draft",
+        description="wip",
+        published=False,
+    )
+    session.add(unpublished)
+    session.commit()
+    session.refresh(unpublished)
+    return unpublished
+
+
 def test_list_projects_empty(client: TestClient) -> None:
     response = client.get("/api/projects")
 
     assert response.status_code == 200
     assert response.json() == []
+
+
+def test_list_projects_hides_unpublished(
+    client: TestClient, project: Project, unpublished_project: Project, session: Session
+) -> None:
+    response = client.get("/api/projects")
+    assert response.status_code == 200
+    slugs = [p["slug"] for p in response.json()]
+    assert "a-new-project" in slugs
+    assert "draft" not in slugs
+
+
+def test_list_projects_all_requires_admin(
+    client: TestClient,
+    project: Project,
+    unpublished_project: Project,
+    session: Session,
+) -> None:
+    response = client.get("/api/projects?all=true")
+    assert response.status_code == 200
+    slugs = [p["slug"] for p in response.json()]
+    assert "draft" not in slugs
+
+
+def test_list_projects_all_as_admin(
+    admin_client: TestClient,
+    project: Project,
+    unpublished_project: Project,
+    session: Session,
+) -> None:
+    response = admin_client.get("/api/projects?all=true")
+    assert response.status_code == 200
+    slugs = [p["slug"] for p in response.json()]
+    assert "a-new-project" in slugs
+    assert "draft" in slugs
 
 
 def test_create_project(admin_client: TestClient, session: Session) -> None:
@@ -97,13 +146,9 @@ def test_get_project_not_found(client: TestClient) -> None:
 
 
 def test_get_project_not_published(
-    client: TestClient, project: Project, session: Session
+    client: TestClient, unpublished_project: Project, session: Session
 ) -> None:
-    project.published = False
-    session.add(project)
-    session.commit()
-
-    response = client.get("/api/projects/a-new-project")
+    response = client.get("/api/projects/draft")
     assert response.status_code == 404
 
 

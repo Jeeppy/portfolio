@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from typing import Annotated
 
 import bcrypt
 import structlog
@@ -10,6 +11,7 @@ from app.config import Settings, get_settings
 
 security = HTTPBearer()
 logger = structlog.get_logger()
+bearer_optional = HTTPBearer(auto_error=False)
 
 
 def verify_password(plain: str, hashed: str) -> bool:
@@ -56,3 +58,14 @@ def get_current_admin(
         logger.warning("Invalid or expired token")
         raise credentials_exception from error
     return email
+
+
+def get_optional_admin(
+    credentials: Annotated[
+        HTTPAuthorizationCredentials | None, Depends(bearer_optional)
+    ] = None,
+    settings: Settings = Depends(get_settings),
+) -> str | None:
+    if credentials is None:
+        return None
+    return get_current_admin(credentials, settings)

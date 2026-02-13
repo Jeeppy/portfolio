@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from app.auth import get_current_admin
+from app.auth import get_current_admin, get_optional_admin
 from app.database import get_session
 from app.models import Project, Tag
 from app.schemas import ProjectCreate, ProjectRead, ProjectUpdate
@@ -15,7 +15,13 @@ logger = structlog.get_logger()
 
 
 @router.get("", response_model=list[ProjectRead])
-def list_projects(session: Session = Depends(get_session)) -> Sequence[Project]:
+def list_projects(
+    all: bool = False,
+    session: Session = Depends(get_session),
+    admin: str | None = Depends(get_optional_admin),
+) -> Sequence[Project]:
+    if all and admin:
+        return session.exec(select(Project)).all()
     statement = select(Project).where(Project.published == True)
     return session.exec(statement).all()
 
