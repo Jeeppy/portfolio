@@ -36,4 +36,8 @@ jobs:
         run: uv run bandit -c pyproject.toml -r app/
 
       - name: Tests
+        env:
+          SECRET_KEY: test-secret-key
+          ADMIN_EMAIL: admin@test.com
+          ADMIN_PASSWORD: testpassword
         run: uv run pytest
