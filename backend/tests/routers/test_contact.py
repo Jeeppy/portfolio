@@ -129,7 +129,7 @@ def test_list_messages_pagination(admin_client: TestClient, session: Session) ->
                 message="msg",
             )
         )
-        session.commit()
+    session.commit()
 
     response = admin_client.get("/api/contact?limit=2")
     assert response.status_code == 200

@@ -179,3 +179,24 @@ def test_delete_project(admin_client: TestClient, project: Project) -> None:
 
     response = admin_client.get("/api/projects/a-new-project")
     assert response.status_code == 404
+
+
+def test_list_projects_pagination(admin_client: TestClient, session: Session) -> None:
+    for i in range(5):
+        session.add(
+            Project(
+                title=f"Project{i}",
+                slug=f"project-{i}",
+                description="desc",
+                published=True,
+            )
+        )
+    session.commit()
+
+    response = admin_client.get("/api/projects?limit=2")
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+    response = admin_client.get("/api/projects?offset=3")
+    assert response.status_code == 200
+    assert len(response.json()) == 2

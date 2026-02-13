@@ -17,12 +17,16 @@ logger = structlog.get_logger()
 @router.get("", response_model=list[ProjectRead])
 def list_projects(
     all: bool = False,
+    offset: int = 0,
+    limit: int = 10,
     session: Session = Depends(get_session),
     admin: str | None = Depends(get_optional_admin),
 ) -> Sequence[Project]:
     if all and admin:
         return session.exec(select(Project)).all()
-    statement = select(Project).where(Project.published == True)
+    statement = (
+        select(Project).where(Project.published == True).offset(offset).limit(limit)
+    )
     return session.exec(statement).all()
 
 
