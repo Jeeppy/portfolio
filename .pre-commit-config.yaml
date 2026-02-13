@@ -65,8 +65,11 @@ repos:
         name: "Format · Fix end of files"
       - id: trailing-whitespace
         name: "Format · Trim trailing whitespace"
+      - id: detect-private-key
+        name: "Security · Detect private key"
       - id: check-added-large-files
         name: "Git · Block large files"
+        args: ['--maxkb=500']
       - id: check-merge-conflict
         name: "Git · Detect conflict markers"
 

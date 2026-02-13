@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -15,10 +13,14 @@ from app.schemas import LoginRequest, TokenResponse
 router = APIRouter(prefix="/auth", tags=["auth"])
 logger = structlog.get_logger()
 
+_admin_hash: str | None = None
 
-@lru_cache
-def _get_admin_hash(password: str) -> str:
-    return hash_password(password)
+
+def _get_admin_hash(settings: Settings) -> str:
+    global _admin_hash
+    if _admin_hash is None:
+        _admin_hash = hash_password(settings.admin_password)
+    return _admin_hash
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -26,7 +28,7 @@ def login(
     data: LoginRequest,
     settings: Settings = Depends(get_settings),
 ) -> TokenResponse:
-    admin_hash = _get_admin_hash(settings.admin_password)
+    admin_hash = _get_admin_hash(settings)
     if settings.admin_email != data.email or not verify_password(
         data.password, admin_hash
     ):

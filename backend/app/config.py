@@ -11,13 +11,13 @@ class Settings(BaseSettings):
     model_config = {"env_file": ".env", "extra": "ignore"}
 
     # Auth
-    secret_key: str = "change-me-to-a-random-string-64-chars"
+    secret_key: str
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440
 
     # Admin
-    admin_email: str = "admin@example.com"
-    admin_password: str = "changeme"
+    admin_email: str
+    admin_password: str
 
 
 @lru_cache

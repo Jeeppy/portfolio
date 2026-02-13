@@ -16,7 +16,7 @@ logger = structlog.get_logger()
 
 @router.get("", response_model=list[ProjectRead])
 def list_projects(session: Session = Depends(get_session)) -> Sequence[Project]:
-    statement = select(Project).where(Project.published is True)
+    statement = select(Project).where(Project.published == True)
     return session.exec(statement).all()
 
 
