@@ -86,13 +86,24 @@ def test_get_project_by_slug(admin_client: TestClient, project: Project) -> None
     response = admin_client.get("/api/projects/a-new-project")
     assert response.status_code == 200
     data = response.json()
-    assert data["title"] == "a new project"
-    assert data["description"] == "a description for a new project"
+    assert data["title"] == project.title
+    assert data["description"] == project.description
     assert data["published"] is True
 
 
 def test_get_project_not_found(client: TestClient) -> None:
     response = client.get("/api/projects/nope")
+    assert response.status_code == 404
+
+
+def test_get_project_not_published(
+    client: TestClient, project: Project, session: Session
+) -> None:
+    project.published = False
+    session.add(project)
+    session.commit()
+
+    response = client.get("/api/projects/a-new-project")
     assert response.status_code == 404
 
 

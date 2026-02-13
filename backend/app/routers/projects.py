@@ -22,7 +22,12 @@ def list_projects(session: Session = Depends(get_session)) -> Sequence[Project]:
 
 @router.get("/{slug}", response_model=ProjectRead)
 def get_project(slug: str, session: Session = Depends(get_session)) -> Project:
-    return _get_project_or_404(slug, session)
+    project = _get_project_or_404(slug, session)
+    if not project.published:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
+        )
+    return project
 
 
 @router.post("", response_model=ProjectRead, status_code=status.HTTP_201_CREATED)
