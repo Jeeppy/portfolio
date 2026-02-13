@@ -12,9 +12,9 @@ class ProjectTagLink(SQLModel, table=True):
 
 class Project(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    title: str = Field(index=True)
-    slug: str = Field(unique=True, index=True)
-    description: str = ""
+    title: str = Field(index=True, max_length=200)
+    slug: str = Field(unique=True, index=True, max_length=200)
+    description: str = Field(default="", max_length=5000)
     published: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -26,15 +26,15 @@ class Project(SQLModel, table=True):
 
 class Profile(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    full_name: str = ""
-    title: str = ""
-    bio: str = ""
-    avatar_url: str = ""
-    resume_url: str = ""
-    location: str = ""
-    email: str = ""
-    github_url: str = ""
-    linkedin_url: str = ""
+    full_name: str = Field(default="", max_length=200)
+    title: str = Field(default="", max_length=200)
+    bio: str = Field(default="", max_length=500)
+    avatar_url: str = Field(default="", max_length=500)
+    resume_url: str = Field(default="", max_length=500)
+    location: str = Field(default="", max_length=200)
+    email: str = Field(default="", max_length=200)
+    github_url: str = Field(default="", max_length=500)
+    linkedin_url: str = Field(default="", max_length=500)
 
     skills: list["Skill"] = Relationship(back_populates="profile")
     experiences: list["Experience"] = Relationship(back_populates="profile")
@@ -43,17 +43,17 @@ class Profile(SQLModel, table=True):
 
 class ContactMessage(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str
-    email: str
-    subject: str
-    message: str
+    name: str = Field(max_length=100)
+    email: str = Field(max_length=200)
+    subject: str = Field(max_length=200)
+    message: str = Field(max_length=5000)
     read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class Tag(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str = Field(unique=True, index=True)
+    name: str = Field(unique=True, index=True, max_length=100)
 
     projects: list[Project] = Relationship(
         back_populates="tags", link_model=ProjectTagLink
@@ -62,9 +62,9 @@ class Tag(SQLModel, table=True):
 
 class Skill(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str = Field(unique=True, index=True)
-    category: str = ""
-    level: int = 0
+    name: str = Field(unique=True, index=True, max_length=100)
+    category: str = Field(default="", max_length=100)
+    level: int = Field(default=0, ge=0, le=10)
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
     profile: Profile | None = Relationship(back_populates="skills")
@@ -72,10 +72,10 @@ class Skill(SQLModel, table=True):
 
 class Experience(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    company: str
-    position: str
-    location: str = ""
-    description: str = ""
+    company: str = Field(max_length=200)
+    position: str = Field(max_length=200)
+    location: str = Field(default="", max_length=200)
+    description: str = Field(default="", max_length=5000)
     start_date: date
     end_date: date | None = None
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
@@ -85,9 +85,9 @@ class Experience(SQLModel, table=True):
 
 class Education(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    school: str
-    degree: str
-    location: str = ""
+    school: str = Field(max_length=200)
+    degree: str = Field(max_length=200)
+    location: str = Field(default="", max_length=200)
     year: int
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
