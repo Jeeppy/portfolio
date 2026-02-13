@@ -134,3 +134,17 @@ def test_list_messages_pagination(admin_client: TestClient, session: Session) ->
     response = admin_client.get("/api/contact?limit=2")
     assert response.status_code == 200
     assert len(response.json()) == 2
+
+
+def test_create_message_rate_limited(client: TestClient) -> None:
+    payload = {
+        "name": "spam",
+        "email": "spam@test.com",
+        "subject": "spam",
+        "message": "spam message",
+    }
+    for _ in range(5):
+        client.post("/api/contact/", json=payload)
+
+    response = client.post("/api/contact/", json=payload)
+    assert response.status_code == 429

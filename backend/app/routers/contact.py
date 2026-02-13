@@ -2,7 +2,9 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlmodel import Session, select
 
 from app.auth import get_current_admin
@@ -12,11 +14,13 @@ from app.schemas import ContactCreate, ContactRead
 
 router = APIRouter(prefix="/contact", tags=["contact"])
 logger = structlog.get_logger()
+limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("", response_model=ContactRead, status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
 def create_message(
-    data: ContactCreate, session: Session = Depends(get_session)
+    request: Request, data: ContactCreate, session: Session = Depends(get_session)
 ) -> ContactMessage:
     message = ContactMessage(**data.model_dump())
     session.add(message)
