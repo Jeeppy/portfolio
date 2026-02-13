@@ -9,7 +9,7 @@ on:
 
 jobs:
   backend:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
 
     defaults:
       run:
