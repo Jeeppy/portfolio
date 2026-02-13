@@ -58,6 +58,7 @@ class ContactMessage(SQLModel, table=True):
     message: str = Field(max_length=5000)
     read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    deleted_at: datetime | None = None
 
 
 class Tag(SQLModel, table=True):

@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -30,7 +31,9 @@ def create_message(
 def list_messages(
     session: Session = Depends(get_session), _: str = Depends(get_current_admin)
 ) -> Sequence[ContactMessage]:
-    return session.exec(select(ContactMessage)).all()
+    return session.exec(
+        select(ContactMessage).where(ContactMessage.deleted_at == None)  # noqa: E711
+    ).all()
 
 
 @router.patch("/{message_id}/read", response_model=ContactRead)
@@ -53,3 +56,22 @@ def read_message(
 
     logger.info("Message marked as read", message_id=message_id)
     return message
+
+
+@router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_message(
+    message_id: int,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> None:
+    statement = select(ContactMessage).where(ContactMessage.id == message_id)
+    message: ContactMessage | None = session.exec(statement).first()
+    if message is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
+        )
+
+    message.deleted_at = datetime.now(UTC)
+    session.add(message)
+    session.commit()
+    logger.info("Message soft-deleted", message_id=message_id)

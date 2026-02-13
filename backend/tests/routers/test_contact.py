@@ -1,7 +1,19 @@
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.models import ContactMessage
+
+
+@pytest.fixture
+def message(session: Session) -> ContactMessage:
+    message = ContactMessage(
+        name="first", email="first@test.com", subject="sub 1", message="message 1"
+    )
+    session.add(message)
+    session.commit()
+    session.refresh(message)
+    return message
 
 
 def test_send_message(client: TestClient, session: Session) -> None:
@@ -66,24 +78,42 @@ def test_list_messages_without_auth(client: TestClient) -> None:
 
 
 def test_mark_as_read(
-    session: Session, admin_client: TestClient, client: TestClient
+    session: Session,
+    admin_client: TestClient,
+    client: TestClient,
+    message: ContactMessage,
 ) -> None:
-    client.post(
-        "/api/contact",
-        json={
-            "name": "first",
-            "email": "first@test.com",
-            "subject": "sub1",
-            "message": "msg1",
-        },
-    )
-    msg = session.exec(select(ContactMessage)).first()
-    assert msg is not None
-    response = admin_client.patch(f"/api/contact/{msg.id}/read")
+    response = admin_client.patch(f"/api/contact/{message.id}/read")
     assert response.status_code == 200
-    assert msg.read is True
+    assert message.read is True
 
 
 def test_mark_as_read_not_found(admin_client: TestClient) -> None:
     response = admin_client.patch("/api/contact/999/read")
     assert response.status_code == 404
+
+
+def test_delete_message(admin_client: TestClient, message: ContactMessage) -> None:
+    response = admin_client.delete(f"/api/contact/{message.id}")
+    assert response.status_code == 204
+
+
+def test_deleted_message_hidden_from_list(
+    admin_client: TestClient, message: ContactMessage
+) -> None:
+    admin_client.delete(f"/api/contact/{message.id}")
+    response = admin_client.get("/api/contact")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+
+def test_delete_message_not_found(admin_client: TestClient) -> None:
+    response = admin_client.delete("/api/contact/999")
+    assert response.status_code == 404
+
+
+def test_delete_message_without_auth(
+    client: TestClient, message: ContactMessage
+) -> None:
+    response = client.delete(f"/api/contact/{message.id}")
+    assert response.status_code == 401
