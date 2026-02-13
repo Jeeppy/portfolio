@@ -36,9 +36,18 @@ class Profile(SQLModel, table=True):
     github_url: str = Field(default="", max_length=500)
     linkedin_url: str = Field(default="", max_length=500)
 
-    skills: list["Skill"] = Relationship(back_populates="profile")
-    experiences: list["Experience"] = Relationship(back_populates="profile")
-    education: list["Education"] = Relationship(back_populates="profile")
+    skills: list["Skill"] = Relationship(
+        back_populates="profile",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+    experiences: list["Experience"] = Relationship(
+        back_populates="profile",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+    education: list["Education"] = Relationship(
+        back_populates="profile",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
 
 
 class ContactMessage(SQLModel, table=True):
