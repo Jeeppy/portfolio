@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class TagRead(BaseModel):
@@ -9,17 +9,17 @@ class TagRead(BaseModel):
 
 
 class ProjectCreate(BaseModel):
-    title: str
-    slug: str
-    description: str = ""
+    title: str = Field(min_length=1, max_length=200)
+    slug: str = Field(min_length=1, max_length=200)
+    description: str = Field(default="", max_length=5000)
     tags: list[str] = []
     published: bool = True
 
 
 class ProjectUpdate(BaseModel):
-    title: str | None = None
-    slug: str | None = None
-    description: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    slug: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
     tags: list[str] | None = None
     published: bool | None = None
 
@@ -37,7 +37,7 @@ class ProjectRead(BaseModel):
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=10, max_length=200)
 
 
 class TokenResponse(BaseModel):
@@ -46,9 +46,9 @@ class TokenResponse(BaseModel):
 
 
 class SkillCreate(BaseModel):
-    name: str
-    category: str = ""
-    level: int = 0
+    name: str = Field(min_length=1, max_length=100)
+    category: str = Field(default="", max_length=100)
+    level: int = Field(default=0, ge=0, le=10)
 
 
 class SkillRead(BaseModel):
@@ -59,10 +59,10 @@ class SkillRead(BaseModel):
 
 
 class ExperienceCreate(BaseModel):
-    company: str
-    position: str
-    location: str = ""
-    description: str = ""
+    company: str = Field(min_length=1, max_length=200)
+    position: str = Field(min_length=1, max_length=200)
+    location: str = Field(default="", max_length=200)
+    description: str = Field(default="", max_length=5000)
     start_date: date
     end_date: date | None = None
 
@@ -78,9 +78,9 @@ class ExperienceRead(BaseModel):
 
 
 class EducationCreate(BaseModel):
-    school: str
-    degree: str
-    location: str = ""
+    school: str = Field(min_length=1, max_length=200)
+    degree: str = Field(min_length=1, max_length=200)
+    location: str = Field(default="", max_length=200)
     year: int
 
 
@@ -109,25 +109,25 @@ class ProfileRead(BaseModel):
 
 
 class ProfileUpdate(BaseModel):
-    full_name: str | None = None
-    title: str | None = None
-    bio: str | None = None
-    avatar_url: str | None = None
-    resume_url: str | None = None
-    location: str | None = None
+    full_name: str | None = Field(default=None, min_length=1, max_length=200)
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    bio: str | None = Field(default=None, max_length=5000)
+    avatar_url: str | None = Field(default=None, max_length=500)
+    resume_url: str | None = Field(default=None, max_length=500)
+    location: str | None = Field(default=None, max_length=200)
     email: EmailStr | None = None
-    github_url: str | None = None
-    linkedin_url: str | None = None
+    github_url: str | None = Field(default=None, max_length=500)
+    linkedin_url: str | None = Field(default=None, max_length=500)
     skills: list[SkillCreate] | None = None
     experiences: list[ExperienceCreate] | None = None
     education: list[EducationCreate] | None = None
 
 
 class ContactCreate(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
     email: EmailStr
-    subject: str
-    message: str
+    subject: str = Field(min_length=1, max_length=200)
+    message: str = Field(min_length=1, max_length=5000)
 
 
 class ContactRead(BaseModel):
