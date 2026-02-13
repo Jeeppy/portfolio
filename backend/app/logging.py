@@ -5,7 +5,7 @@ import structlog
 
 
 def setup_logging(debug: bool = False) -> None:
-    """Configure structlog pour le projet."""
+    """Configure structlog for the project."""
     log_level = logging.DEBUG if debug else logging.INFO
 
     # Processors structlog
@@ -18,7 +18,7 @@ def setup_logging(debug: bool = False) -> None:
 
     renderer: structlog.dev.ConsoleRenderer | structlog.processors.JSONRenderer
     if debug:
-        # Dev: output lisible et coloré
+        # Dev: readable and colored output
         renderer = structlog.dev.ConsoleRenderer()
     else:
         renderer = structlog.processors.JSONRenderer()

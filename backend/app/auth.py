@@ -13,19 +13,19 @@ logger = structlog.get_logger()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    """Vérifie un mot de passe contre son hash."""
+    """Verify a password against its hash."""
     result: bool = bcrypt.checkpw(plain.encode(), hashed.encode())
     return result
 
 
 def hash_password(password: str) -> str:
-    """Hash un mot de passe."""
+    """Hash a password."""
     result: str = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     return result
 
 
 def create_access_token(data: dict, settings: Settings) -> str:
-    """Créé un JWT avec une expiration."""
+    """Create a JWT with an expiration."""
     to_encode = data.copy()
     expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
     to_encode.update({"exp": expire})
@@ -39,11 +39,11 @@ def get_current_admin(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     settings: Settings = Depends(get_settings),
 ) -> str:
-    """Vérifier le JWT et retourne l'email admin."""
+    """Verify the JWT and return the admin email."""
     token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Token invalide ou expiré",
+        detail="Invalid or expired token",
     )
     try:
         payload = jwt.decode(

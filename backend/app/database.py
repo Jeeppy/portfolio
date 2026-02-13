@@ -7,7 +7,7 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# Créé le dossier data si il n'existe pas
+# Create the data directory if it doesn't exist
 db_path = settings.database_url.replace("sqlite:///", "")
 Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -19,11 +19,11 @@ engine = create_engine(
 
 
 def init_db() -> None:
-    """Crée les tables au démarrage."""
+    """Create tables on startup."""
     SQLModel.metadata.create_all(engine)
 
 
 def get_session() -> Generator[Session, None, None]:
-    """Dependency FastAPI - fournit une session DB par requête."""
+    """FastAPI dependency - provide a DB session per request."""
     with Session(engine) as session:
         yield session

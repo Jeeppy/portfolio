@@ -23,7 +23,7 @@ from app.models import (  # noqa: F401
 
 @pytest.fixture
 def session() -> Generator[Session]:
-    """DB en mémoire - recréée pour chaque test."""
+    """In-memory DB - recreated for each test."""
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
@@ -36,7 +36,7 @@ def session() -> Generator[Session]:
 
 @pytest.fixture
 def client(session: Session) -> Generator[TestClient]:
-    """Client HTTP qui utilise la DB de test."""
+    """HTTP client using the test DB."""
 
     def _get_test_session() -> Generator[Session]:
         yield session
@@ -49,7 +49,7 @@ def client(session: Session) -> Generator[TestClient]:
 
 @pytest.fixture
 def admin_client(client: TestClient) -> Generator[TestClient]:
-    """Client authentifié (admin)"""
+    """Authenticated client (admin)."""
 
     def _fake_admin() -> str:
         return "admin@test.com"
@@ -61,7 +61,7 @@ def admin_client(client: TestClient) -> Generator[TestClient]:
 
 @pytest.fixture(autouse=True)
 def settings_override() -> Generator[None]:
-    """Override settings pour les tests."""
+    """Override settings for tests."""
     test_settings = Settings(
         admin_email="admin@test.com",
         admin_password="testpassword",

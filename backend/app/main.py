@@ -14,7 +14,7 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Exécuté au démarrage / arrêt de l'app."""
+    """Run on application startup / shutdown."""
     setup_logging(debug=settings.debug)
     logger = structlog.get_logger()
     logger.info("Starting Portfolio API", debug=settings.debug)
