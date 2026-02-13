@@ -1,10 +1,15 @@
 from collections.abc import Generator
+from pathlib import Path
 
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.config import get_settings
 
 settings = get_settings()
+
+# Créé le dossier data si il n'existe pas
+db_path = settings.database_url.replace("sqlite:///", "")
+Path(db_path).parent.mkdir(parents=True, exist_ok=True)
 
 engine = create_engine(
     settings.database_url,
