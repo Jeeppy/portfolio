@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class TagRead(BaseModel):
@@ -36,7 +36,7 @@ class ProjectRead(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -115,7 +115,7 @@ class ProfileUpdate(BaseModel):
     avatar_url: str | None = None
     resume_url: str | None = None
     location: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
     github_url: str | None = None
     linkedin_url: str | None = None
     skills: list[SkillCreate] | None = None
@@ -125,7 +125,7 @@ class ProfileUpdate(BaseModel):
 
 class ContactCreate(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     subject: str
     message: str
 

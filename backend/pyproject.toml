@@ -5,6 +5,7 @@ description = "REST API for self-hosted developer portfolio — FastAPI + SQLMod
 requires-python = ">=3.12.8"
 dependencies = [
     "bcrypt>=5.0.0",
+    "email-validator>=2.3.0",
     "fastapi[standard]>=0.128.7",
     "pydantic-settings>=2.12.0",
     "python-jose[cryptography]>=3.5.0",
