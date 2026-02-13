@@ -117,3 +117,20 @@ def test_delete_message_without_auth(
 ) -> None:
     response = client.delete(f"/api/contact/{message.id}")
     assert response.status_code == 401
+
+
+def test_list_messages_pagination(admin_client: TestClient, session: Session) -> None:
+    for i in range(5):
+        session.add(
+            ContactMessage(
+                name=f"user{i}",
+                email=f"u{i}@test.com",
+                subject="sub",
+                message="msg",
+            )
+        )
+        session.commit()
+
+    response = admin_client.get("/api/contact?limit=2")
+    assert response.status_code == 200
+    assert len(response.json()) == 2

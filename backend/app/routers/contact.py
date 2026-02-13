@@ -29,10 +29,16 @@ def create_message(
 
 @router.get("", response_model=list[ContactRead])
 def list_messages(
-    session: Session = Depends(get_session), _: str = Depends(get_current_admin)
+    offset: int = 0,
+    limit: int = 50,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
 ) -> Sequence[ContactMessage]:
     return session.exec(
-        select(ContactMessage).where(ContactMessage.deleted_at == None)  # noqa: E711
+        select(ContactMessage)
+        .where(ContactMessage.deleted_at == None)  # noqa: E711
+        .offset(offset)
+        .limit(limit)
     ).all()
 
 
