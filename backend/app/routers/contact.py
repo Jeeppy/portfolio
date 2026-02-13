@@ -13,7 +13,7 @@ router = APIRouter(prefix="/contact", tags=["contact"])
 logger = structlog.get_logger()
 
 
-@router.post("", response_model=ContactCreate, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ContactRead, status_code=status.HTTP_201_CREATED)
 def create_message(
     data: ContactCreate, session: Session = Depends(get_session)
 ) -> ContactMessage:
