@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlmodel import Session, select
 
 from app.auth import get_current_admin
@@ -31,8 +31,8 @@ def create_message(
 
 @router.get("", response_model=list[ContactRead])
 def list_messages(
-    offset: int = 0,
-    limit: int = 50,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> Sequence[ContactMessage]:

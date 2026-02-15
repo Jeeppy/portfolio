@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
@@ -18,8 +18,8 @@ logger = structlog.get_logger()
 @router.get("", response_model=list[ProjectRead])
 def list_projects(
     all: bool = False,
-    offset: int = 0,
-    limit: int = 10,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, ge=1, le=100),
     session: Session = Depends(get_session),
     admin: str | None = Depends(get_optional_admin),
 ) -> Sequence[Project]:
