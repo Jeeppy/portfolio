@@ -3,18 +3,16 @@ from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from sqlmodel import Session, select
 
 from app.auth import get_current_admin
 from app.database import get_session
+from app.limiter import limiter
 from app.models import ContactMessage
 from app.schemas import ContactCreate, ContactRead
 
 router = APIRouter(prefix="/contact", tags=["contact"])
 logger = structlog.get_logger()
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("", response_model=ContactRead, status_code=status.HTTP_201_CREATED)
