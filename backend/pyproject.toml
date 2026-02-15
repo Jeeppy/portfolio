@@ -32,23 +32,23 @@ line-length = 88
 
 [tool.ruff.lint]
 select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # pyflakes
-    "I",    # isort (import sorting)
-    "N",    # pep8-naming
-    "UP",   # pyupgrade (modern Python syntax)
-    "B",    # flake8-bugbear (common bugs)
-    "SIM",  # flake8-simplify
-    "RUF",  # Ruff-specific rules
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade (modern Python syntax)
+    "B",   # flake8-bugbear (common bugs)
+    "SIM", # flake8-simplify
+    "RUF", # Ruff-specific rules
 ]
 ignore = [
-    "E501",   # line too long (le formatter s'en charge)
+    "E501", # line too long (le formatter s'en charge)
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"**/routers/*" = ["B008", "E712"]
-"**/app/auth.py" =["B008"]
+"**/routers/*" = ["B008"]
+"**/app/auth.py" = ["B008"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
@@ -69,10 +69,10 @@ pythonpath = ["."]
 addopts = "--cov=app --cov-report=term-missing --verbose"
 
 [tool.pytest-env]
-  SECRET_KEY = "test-secret-key"
-  ADMIN_EMAIL = "admin@test.com"
-  ADMIN_PASSWORD = "testpassword"
-  DATABASE_URL = "sqlite://"
+SECRET_KEY = "test-secret-key"
+ADMIN_EMAIL = "admin@test.com"
+ADMIN_PASSWORD = "testpassword"
+DATABASE_URL = "sqlite://"
 
 [tool.coverage.run]
 source = ["app"]

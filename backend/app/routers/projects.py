@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import true
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
@@ -26,7 +27,7 @@ def list_projects(
     if all and admin:
         return session.exec(select(Project)).all()
     statement = (
-        select(Project).where(Project.published == True).offset(offset).limit(limit)
+        select(Project).where(Project.published == true()).offset(offset).limit(limit)
     )
     return session.exec(statement).all()
 
