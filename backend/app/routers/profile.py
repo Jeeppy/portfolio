@@ -49,7 +49,7 @@ def update_profile(
     session.commit()
     session.refresh(profile)
 
-    logger.info("Profile updated")
+    logger.info("Profile updated", profile_id=profile.id)
     return profile
 
 
@@ -60,5 +60,5 @@ def _get_or_create_profile(session: Session) -> Profile:
         session.add(profile)
         session.commit()
         session.refresh(profile)
-        logger.info("Profile created")
+        logger.info("Profile created", profile_id=profile.id)
     return profile

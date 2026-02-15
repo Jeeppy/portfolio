@@ -36,6 +36,7 @@ def list_projects(
 def get_project(slug: str, session: Session = Depends(get_session)) -> Project:
     project = _get_project_or_404(slug, session)
     if not project.published:
+        logger.warning("Access to unpublished project denied", slug=slug)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Project not found"
         )
