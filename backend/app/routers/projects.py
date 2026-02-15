@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -97,6 +98,7 @@ def update_project(
             if tag is None:
                 tag = Tag(name=tag_name)
             project.tags.append(tag)
+    project.updated_at = datetime.now(UTC)
 
     session.add(project)
     session.commit()
