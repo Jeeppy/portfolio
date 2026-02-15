@@ -2,8 +2,9 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 import structlog
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -45,6 +46,16 @@ app.include_router(projects.router, prefix=settings.api_prefix)
 app.include_router(auth.router, prefix=settings.api_prefix)
 app.include_router(profile.router, prefix=settings.api_prefix)
 app.include_router(contact.router, prefix=settings.api_prefix)
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger = structlog.get_logger()
+    logger.error("unhandled_exception", exc_info=exc, path=request.url.path)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Internal server error"},
+    )
 
 
 @app.get("/")
