@@ -38,14 +38,12 @@ def session() -> Generator[Session]:
 @pytest.fixture
 def client(session: Session) -> Generator[TestClient]:
     """HTTP client using the test DB."""
-
-    def _get_test_session() -> Generator[Session]:
-        yield session
-
-    app.dependency_overrides[get_session] = _get_test_session
-    with TestClient(app) as client:
-        yield client
-    app.dependency_overrides.clear()
+    app.dependency_overrides[get_session] = lambda: session
+    try:
+        with TestClient(app) as client:
+            yield client
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture
@@ -57,8 +55,10 @@ def admin_client(client: TestClient) -> Generator[TestClient]:
 
     app.dependency_overrides[get_current_admin] = _fake_admin
     app.dependency_overrides[get_optional_admin] = _fake_admin
-    yield client
-    app.dependency_overrides.clear()
+    try:
+        yield client
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture(autouse=True)
