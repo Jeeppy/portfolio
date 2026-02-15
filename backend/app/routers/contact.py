@@ -15,6 +15,16 @@ router = APIRouter(prefix="/contact", tags=["contact"])
 logger = structlog.get_logger()
 
 
+def _get_message_or_404(message_id: int, session: Session) -> ContactMessage:
+    statement = select(ContactMessage).where(ContactMessage.id == message_id)
+    message = session.exec(statement).first()
+    if message is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
+        )
+    return message
+
+
 @router.post("", response_model=ContactRead, status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
 def create_message(
@@ -50,14 +60,9 @@ def read_message(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> ContactMessage:
-    statement = select(ContactMessage).where(ContactMessage.id == message_id)
-    message: ContactMessage | None = session.exec(statement).first()
-    if message is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
-        )
-
+    message = _get_message_or_404(message_id, session)
     message.read = True
+
     session.add(message)
     session.commit()
     session.refresh(message)
@@ -72,12 +77,7 @@ def delete_message(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> None:
-    statement = select(ContactMessage).where(ContactMessage.id == message_id)
-    message: ContactMessage | None = session.exec(statement).first()
-    if message is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
-        )
+    message = _get_message_or_404(message_id, session)
 
     message.deleted_at = datetime.now(UTC)
     session.add(message)
