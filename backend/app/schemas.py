@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class TagRead(BaseModel):
@@ -128,6 +128,13 @@ class ContactCreate(BaseModel):
     email: EmailStr
     subject: str = Field(min_length=1, max_length=200)
     message: str = Field(min_length=1, max_length=5000)
+
+    @field_validator("name", "subject", "message", mode="before")
+    @classmethod
+    def strip_whitespace(cls, value: str) -> str:
+        if isinstance(value, str):
+            return value.strip()
+        return value
 
 
 class ContactRead(BaseModel):
