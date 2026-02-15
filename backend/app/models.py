@@ -58,7 +58,7 @@ class ContactMessage(SQLModel, table=True):
     message: str = Field(max_length=5000)
     read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    deleted_at: datetime | None = None
+    deleted_at: datetime | None = Field(default=None, index=True)
 
 
 class Tag(SQLModel, table=True):
@@ -75,7 +75,7 @@ class Skill(SQLModel, table=True):
     name: str = Field(unique=True, index=True, max_length=100)
     category: str = Field(default="", max_length=100)
     level: int = Field(default=0, ge=0, le=10)
-    profile_id: int | None = Field(default=None, foreign_key="profile.id")
+    profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
     profile: Profile | None = Relationship(back_populates="skills")
 
@@ -88,7 +88,7 @@ class Experience(SQLModel, table=True):
     description: str = Field(default="", max_length=5000)
     start_date: date
     end_date: date | None = None
-    profile_id: int | None = Field(default=None, foreign_key="profile.id")
+    profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
     profile: Profile | None = Relationship(back_populates="experiences")
 
@@ -99,6 +99,6 @@ class Education(SQLModel, table=True):
     degree: str = Field(max_length=200)
     location: str = Field(default="", max_length=200)
     year: int
-    profile_id: int | None = Field(default=None, foreign_key="profile.id")
+    profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
     profile: Profile | None = Relationship(back_populates="education")
