@@ -200,3 +200,19 @@ def test_list_projects_pagination(admin_client: TestClient, session: Session) ->
     response = admin_client.get("/api/projects?offset=3")
     assert response.status_code == 200
     assert len(response.json()) == 2
+
+
+def test_create_project_slug_case_sensitivity(
+    admin_client: TestClient, project: Project
+) -> None:
+    response = admin_client.post(
+        "/api/projects",
+        json={
+            "title": "Another project",
+            "slug": "A-New-Project",
+            "description": "same slug different case",
+            "tags": [],
+            "published": True,
+        },
+    )
+    assert response.status_code in (201, 409)

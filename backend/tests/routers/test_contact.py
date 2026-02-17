@@ -148,3 +148,29 @@ def test_create_message_rate_limited(client: TestClient) -> None:
 
     response = client.post("/api/contact/", json=payload)
     assert response.status_code == 429
+
+
+def test_send_message_invalid_email(client: TestClient) -> None:
+    response = client.post(
+        "/api/contact",
+        json={
+            "name": "a person",
+            "email": "not-an-email",
+            "subject": "a subject",
+            "message": "a message",
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_send_message_whitespace_only(client: TestClient) -> None:
+    response = client.post(
+        "/api/contact/",
+        json={
+            "name": "    ",
+            "email": "mail@test.com",
+            "subject": "     ",
+            "message": "     ",
+        },
+    )
+    assert response.status_code == 422
