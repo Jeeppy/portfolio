@@ -67,7 +67,7 @@ def settings_override() -> Generator[None]:
     test_settings = Settings(
         admin_email="admin@test.com",
         admin_password="testpassword",
-        secret_key="test-secret-key",
+        secret_key="testsecretkey-that-is-long-enough-for-hs256",  # gitleaks:allow
         database_url="sqlite://",
     )
     app.dependency_overrides[get_settings] = lambda: test_settings

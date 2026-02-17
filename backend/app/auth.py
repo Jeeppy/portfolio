@@ -2,10 +2,10 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 import bcrypt
+import jwt
 import structlog
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 
 from app.config import Settings, get_settings
 
@@ -54,7 +54,7 @@ def get_current_admin(
         email: str | None = payload.get("sub")
         if email is None:
             raise credentials_exception
-    except JWTError as error:
+    except jwt.InvalidTokenError as error:
         logger.warning("Invalid or expired token")
         raise credentials_exception from error
     return email
