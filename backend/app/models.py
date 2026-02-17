@@ -26,15 +26,15 @@ class Project(SQLModel, table=True):
 
 class Profile(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    full_name: str = Field(default="", max_length=200)
-    title: str = Field(default="", max_length=200)
-    bio: str = Field(default="", max_length=500)
-    avatar_url: str = Field(default="", max_length=500)
-    resume_url: str = Field(default="", max_length=500)
-    location: str = Field(default="", max_length=200)
-    email: str = Field(default="", max_length=200)
-    github_url: str = Field(default="", max_length=500)
-    linkedin_url: str = Field(default="", max_length=500)
+    full_name: str | None = Field(default=None, max_length=200)
+    title: str | None = Field(default=None, max_length=200)
+    bio: str | None = Field(default=None, max_length=500)
+    avatar_url: str | None = Field(default=None, max_length=500)
+    resume_url: str | None = Field(default=None, max_length=500)
+    location: str | None = Field(default=None, max_length=200)
+    email: str | None = Field(default=None, max_length=200)
+    github_url: str | None = Field(default=None, max_length=500)
+    linkedin_url: str | None = Field(default=None, max_length=500)
 
     skills: list["Skill"] = Relationship(
         back_populates="profile",

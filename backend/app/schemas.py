@@ -94,15 +94,15 @@ class EducationRead(BaseModel):
 
 class ProfileRead(BaseModel):
     id: int
-    full_name: str
-    title: str
-    bio: str
-    avatar_url: str
-    resume_url: str
-    location: str
-    email: str
-    github_url: str
-    linkedin_url: str
+    full_name: str | None
+    title: str | None
+    bio: str | None
+    avatar_url: str | None
+    resume_url: str | None
+    location: str | None
+    email: str | None
+    github_url: str | None
+    linkedin_url: str | None
     skills: list[SkillRead] = []
     experiences: list[ExperienceRead] = []
     education: list[EducationRead] = []
