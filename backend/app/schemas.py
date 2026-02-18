@@ -11,7 +11,7 @@ class TagRead(BaseModel):
 class ProjectCreate(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     slug: str = Field(min_length=1, max_length=200)
-    description: str = Field(default="", max_length=5000)
+    description: str | None = Field(default=None, max_length=5000)
     tags: list[str] = []
     published: bool = True
 
@@ -28,7 +28,7 @@ class ProjectRead(BaseModel):
     id: int
     title: str
     slug: str
-    description: str
+    description: str | None
     published: bool
     created_at: datetime
     updated_at: datetime
@@ -47,22 +47,22 @@ class TokenResponse(BaseModel):
 
 class SkillCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    category: str = Field(default="", max_length=100)
+    category: str | None = Field(default=None, max_length=100)
     level: int = Field(default=0, ge=0, le=10)
 
 
 class SkillRead(BaseModel):
     id: int
     name: str
-    category: str
+    category: str | None
     level: int
 
 
 class ExperienceCreate(BaseModel):
     company: str = Field(min_length=1, max_length=200)
     position: str = Field(min_length=1, max_length=200)
-    location: str = Field(default="", max_length=200)
-    description: str = Field(default="", max_length=5000)
+    location: str | None = Field(default=None, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
     start_date: date
     end_date: date | None = None
 
@@ -71,8 +71,8 @@ class ExperienceRead(BaseModel):
     id: int
     company: str
     position: str
-    location: str
-    description: str
+    location: str | None
+    description: str | None
     start_date: date
     end_date: date | None
 
@@ -80,7 +80,7 @@ class ExperienceRead(BaseModel):
 class EducationCreate(BaseModel):
     school: str = Field(min_length=1, max_length=200)
     degree: str = Field(min_length=1, max_length=200)
-    location: str = Field(default="", max_length=200)
+    location: str | None = Field(default=None, max_length=200)
     year: int
 
 
@@ -88,7 +88,7 @@ class EducationRead(BaseModel):
     id: int
     school: str
     degree: str
-    location: str
+    location: str | None
     year: int
 
 

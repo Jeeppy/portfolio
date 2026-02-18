@@ -14,7 +14,7 @@ class Project(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(index=True, max_length=200)
     slug: str = Field(unique=True, index=True, max_length=200)
-    description: str = Field(default="", max_length=5000)
+    description: str | None = Field(default=None, max_length=5000)
     published: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -73,7 +73,7 @@ class Tag(SQLModel, table=True):
 class Skill(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(unique=True, index=True, max_length=100)
-    category: str = Field(default="", max_length=100)
+    category: str | None = Field(default=None, max_length=100)
     level: int = Field(default=0, ge=0, le=10)
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
@@ -84,8 +84,8 @@ class Experience(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     company: str = Field(max_length=200)
     position: str = Field(max_length=200)
-    location: str = Field(default="", max_length=200)
-    description: str = Field(default="", max_length=5000)
+    location: str | None = Field(default=None, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
     start_date: date
     end_date: date | None = None
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
@@ -97,7 +97,7 @@ class Education(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     school: str = Field(max_length=200)
     degree: str = Field(max_length=200)
-    location: str = Field(default="", max_length=200)
+    location: str | None = Field(default=None, max_length=200)
     year: int
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
