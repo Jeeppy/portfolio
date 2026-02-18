@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -59,5 +59,11 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 
 
 @app.get("/")
-def root() -> dict[str, str]:
-    return {"message": "Hello Portfolio!"}
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/health")
+def health_check() -> dict[str, str]:
+    """Returns API health status."""
+    return {"status": "ok"}
