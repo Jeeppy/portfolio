@@ -216,3 +216,22 @@ def test_create_project_slug_case_sensitivity(
         },
     )
     assert response.status_code in (201, 409)
+
+
+def test_update_project_not_found(admin_client: TestClient) -> None:
+    response = admin_client.put(
+        "/api/projects/nonexistent", json={"description": "nope"}
+    )
+    assert response.status_code == 404
+
+
+def test_update_project_tags_empty(admin_client: TestClient, project: Project) -> None:
+    response = admin_client.put("/api/projects/a-new-project", json={"tags": []})
+
+    assert response.status_code == 200
+    assert response.json()["tags"] == []
+
+
+def test_delete_project_not_found(admin_client: TestClient) -> None:
+    response = admin_client.delete("/api/projects/nonexistent")
+    assert response.status_code == 404

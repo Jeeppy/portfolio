@@ -1,4 +1,7 @@
 from fastapi.testclient import TestClient
+from sqlmodel import Session, select
+
+from app.models import Skill
 
 
 def test_get_profile_auto_create(client: TestClient) -> None:
@@ -108,3 +111,43 @@ def test_update_profile_without_auth(client: TestClient) -> None:
     response = client.put("/api/profile", json={"full_name": "Nope"})
 
     assert response.status_code == 401
+
+
+def test_update_profile_partial_update(admin_client: TestClient) -> None:
+    admin_client.put("/api/profile", json={"full_name": "Jean", "title": "Dev"})
+
+    response = admin_client.put("/api/profile", json={"bio": "new bio"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["bio"] == "new bio"
+    assert data["full_name"] == "Jean"
+
+
+def test_update_profile_invalid_skill_level(admin_client: TestClient) -> None:
+    response = admin_client.put(
+        "/api/profile",
+        json={"skills": [{"name": "Python", "category": "backend", "level": -1}]},
+    )
+    assert response.status_code == 422
+
+    response = admin_client.put(
+        "/api/profile",
+        json={"skills": [{"name": "Python", "category": "backend", "level": 11}]},
+    )
+    assert response.status_code == 422
+
+
+def test_update_profile_cascade_deletes_skills(
+    admin_client: TestClient, session: Session
+) -> None:
+    admin_client.put(
+        "/api/profile",
+        json={"skills": [{"name": "Python", "category": "backend", "level": 5}]},
+    )
+    session.expire_all()
+    assert len(session.exec(select(Skill)).all()) == 1
+
+    admin_client.put("/api/profile", json={"skills": []})
+    session.expire_all()
+    assert len(session.exec(select(Skill)).all()) == 0

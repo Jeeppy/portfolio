@@ -174,3 +174,35 @@ def test_send_message_whitespace_only(client: TestClient) -> None:
         },
     )
     assert response.status_code == 422
+
+
+def test_send_message_too_long(client: TestClient) -> None:
+    response = client.post(
+        "/api/contact",
+        json={
+            "name": "a person",
+            "email": "mail@test.com",
+            "subject": "a subject",
+            "message": "a" * 5001,
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_list_messages_pagination_offset_beyond_total(
+    admin_client: TestClient, session: Session
+) -> None:
+    for i in range(3):
+        session.add(
+            ContactMessage(
+                name=f"user{i}",
+                email=f"u{i}@test.com",
+                subject="sub",
+                message="msg",
+            )
+        )
+        session.commit()
+
+        response = admin_client.get("/api/contact?offset=10")
+        assert response.status_code == 200
+        assert response.json() == []
