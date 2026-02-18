@@ -13,6 +13,10 @@ logger = structlog.get_logger()
 
 @router.get("", response_model=ProfileRead)
 def get_profile(session: Session = Depends(get_session)) -> Profile:
+    """Get the portfolio profile.
+
+    Creates and returns an empty profile if none exists yet.
+    """
     return _get_or_create_profile(session)
 
 
@@ -22,6 +26,11 @@ def update_profile(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> Profile:
+    """Update the portfolio profile (admin only).
+
+    Only provided fields are updated. Nested collections (skills, experiences, education) fully replace
+    the existing list when included.
+    """
     profile = _get_or_create_profile(session)
 
     update_data = data.model_dump(exclude_unset=True)

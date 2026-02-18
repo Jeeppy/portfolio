@@ -30,6 +30,10 @@ def _get_message_or_404(message_id: int, session: Session) -> ContactMessage:
 def create_message(
     request: Request, data: ContactCreate, session: Session = Depends(get_session)
 ) -> ContactMessage:
+    """Send a contact message.
+
+    Rate-limited to 5 requests per minute per IP.
+    """
     message = ContactMessage(**data.model_dump())
     session.add(message)
     session.commit()
@@ -46,6 +50,11 @@ def list_messages(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> Sequence[ContactMessage]:
+    """List contact messages (admin only).
+
+    Soft-deleted messages are excluded.
+    Supports pagination via `offset` and `limit` (max 100).
+    """
     return session.exec(
         select(ContactMessage)
         .where(ContactMessage.deleted_at == None)  # noqa: E711
@@ -60,6 +69,10 @@ def read_message(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> ContactMessage:
+    """Mark a contact message as read (admin only).
+
+    Returns 404 if the message does not exist.
+    """
     message = _get_message_or_404(message_id, session)
     message.read = True
 
@@ -77,6 +90,11 @@ def delete_message(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> None:
+    """Soft-delete a contact message (admin only).
+
+    The message is hidden from the list but not removed from the database.
+    Returns 404 if the message does not exist.
+    """
     message = _get_message_or_404(message_id, session)
 
     message.deleted_at = datetime.now(UTC)

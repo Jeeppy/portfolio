@@ -28,6 +28,10 @@ def login(
     data: LoginRequest,
     settings: Settings = Depends(get_settings),
 ) -> TokenResponse:
+    """Authenticate as admin and retrieve a JWT token.
+
+    Returns a Bearer token to use in the Authorization header for protected endpoints."""
+
     admin_hash = _get_admin_hash(settings)
     if settings.admin_email != data.email or not verify_password(
         data.password, admin_hash
@@ -44,4 +48,5 @@ def login(
 
 @router.get("/me")
 def me(email: str = Depends(get_current_admin)) -> dict[str, str]:
+    """Return the currently authenticated admin's email."""
     return {"email": email}
