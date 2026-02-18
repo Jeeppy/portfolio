@@ -1,0 +1,45 @@
+name: Bug report
+description: Signaler un comportement inattendu
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décris le bug de façon claire et concise.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes de reproduction
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Comportement observé
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environnement
+      placeholder: |
+        - OS : ...
+        - Python : ...
+        - Navigateur : ...
