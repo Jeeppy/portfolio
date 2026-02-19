@@ -14,6 +14,7 @@ class ProjectCreate(BaseModel):
     description: str | None = Field(default=None, max_length=5000)
     tags: list[str] = []
     published: bool = True
+    demo_url: str | None = Field(default=None, max_length=500)
 
 
 class ProjectUpdate(BaseModel):
@@ -22,6 +23,7 @@ class ProjectUpdate(BaseModel):
     description: str | None = Field(default=None, max_length=5000)
     tags: list[str] | None = None
     published: bool | None = None
+    demo_url: str | None = Field(default=None, max_length=500)
 
 
 class ProjectRead(BaseModel):
@@ -30,6 +32,7 @@ class ProjectRead(BaseModel):
     slug: str
     description: str | None
     published: bool
+    demo_url: str | None
     created_at: datetime
     updated_at: datetime
     tags: list[TagRead]

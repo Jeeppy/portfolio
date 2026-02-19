@@ -235,3 +235,31 @@ def test_update_project_tags_empty(admin_client: TestClient, project: Project) -
 def test_delete_project_not_found(admin_client: TestClient) -> None:
     response = admin_client.delete("/api/projects/nonexistent")
     assert response.status_code == 404
+
+
+def test_create_project_with_demo_url(
+    admin_client: TestClient, session: Session
+) -> None:
+    response = admin_client.post(
+        "/api/projects",
+        json={
+            "title": "demo-project",
+            "slug": "demo-project",
+            "description": "a project with demo",
+            "tags": [],
+            "published": True,
+            "demo_url": "https://demo.example.com",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["demo_url"] == "https://demo.example.com"
+
+
+def test_update_project_demo_url(admin_client: TestClient, project: Project) -> None:
+    response = admin_client.put(
+        "/api/projects/a-new-project", json={"demo_url": "https://demo.example.com"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["demo_url"] == "https://demo.example.com"
