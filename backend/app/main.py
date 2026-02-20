@@ -9,7 +9,6 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
-from app.database import init_db
 from app.limiter import limiter
 from app.logging import setup_logging
 from app.routers import auth, contact, profile, projects
@@ -23,8 +22,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     setup_logging(debug=settings.debug)
     logger = structlog.get_logger()
     logger.info("Starting Portfolio API", debug=settings.debug)
-    init_db()
-    logger.info("Database initialized")
     yield
     logger.info("Shutting down")
 
