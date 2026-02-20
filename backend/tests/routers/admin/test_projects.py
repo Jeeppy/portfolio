@@ -141,6 +141,26 @@ def test_create_project_with_demo_url(
     assert response.json()["demo_url"] == "https://demo.example.com"
 
 
+def test_create_project_with_repository_url(
+    admin_client: TestClient,
+    session: Session,
+) -> None:
+    response = admin_client.post(
+        ADMIN_PROJECTS_URL,
+        json={
+            "title": "repo-project",
+            "slug": "repo-project",
+            "description": "a project with a repo",
+            "tags": [],
+            "published": True,
+            "repository_url": "https://github.com/user/repo",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["repository_url"] == "https://github.com/user/repo"
+
+
 def test_update_project(admin_client: TestClient, project: Project) -> None:
     response = admin_client.put(
         f"{ADMIN_PROJECTS_URL}/a-new-project", json={"description": "a new description"}
@@ -193,6 +213,17 @@ def test_update_project_demo_url(admin_client: TestClient, project: Project) -> 
 
     assert response.status_code == 200
     assert response.json()["demo_url"] == "https://demo.example.com"
+
+
+def test_update_project_repository_url(
+    admin_client: TestClient, project: Project
+) -> None:
+    response = admin_client.put(
+        f"{ADMIN_PROJECTS_URL}/a-new-project",
+        json={"repository_url": "https://github.com/user/repo"},
+    )
+    assert response.status_code == 200
+    assert response.json()["repository_url"] == "https://github.com/user/repo"
 
 
 def test_delete_project(admin_client: TestClient, project: Project) -> None:
