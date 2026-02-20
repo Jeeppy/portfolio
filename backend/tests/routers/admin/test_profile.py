@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.models import Skill
+from app.models import Skill, SocialLink
 
 ADMIN_PROFILE_URL = "/api/admin/profile"
 
@@ -143,3 +143,67 @@ def test_update_profile_cascade_deletes_skills(
     admin_client.put(ADMIN_PROFILE_URL, json={"skills": []})
     session.expire_all()
     assert len(session.exec(select(Skill)).all()) == 0
+
+
+def test_update_profile_with_social_links(admin_client: TestClient) -> None:
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "social_links": [
+                {
+                    "platform": "github",
+                    "url": "https://github.com/user",
+                    "display_order": 0,
+                },
+                {
+                    "platform": "linkedin",
+                    "url": "https://linedin.com/in/user",
+                    "display_order": 1,
+                },
+            ],
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["social_links"]) == 2
+    assert data["social_links"][0]["platform"] == "github"
+    assert data["social_links"][1]["platform"] == "linkedin"
+
+
+def test_update_profile_replaces_social_links(admin_client: TestClient) -> None:
+    admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "social_links": [{"platform": "github", "url": "https://github.com/user"}]
+        },
+    )
+
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "social_links": [{"platform": "twitter", "url": "https://twitter.com/user"}]
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["social_links"]) == 1
+    assert data["social_links"][0]["platform"] == "twitter"
+
+
+def test_update_profile_cascade_deletes_social_links(
+    admin_client: TestClient, session: Session
+) -> None:
+    admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "social_links": [{"platform": "github", "url": "https://github.com/user"}]
+        },
+    )
+    session.expire_all()
+    assert len(session.exec(select(SocialLink)).all()) == 1
+
+    admin_client.put(ADMIN_PROFILE_URL, json={"social_links": []})
+    session.expire_all()
+    assert len(session.exec(select(SocialLink)).all()) == 0

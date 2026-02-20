@@ -95,6 +95,19 @@ class EducationRead(BaseModel):
     year: int
 
 
+class SocialLinkCreate(BaseModel):
+    platform: str = Field(min_length=1, max_length=100)
+    url: str = Field(min_length=1, max_length=500)
+    display_order: int = Field(default=0)
+
+
+class SocialLinkRead(BaseModel):
+    id: int
+    platform: str
+    url: str
+    display_order: int
+
+
 class ProfileRead(BaseModel):
     id: int
     full_name: str | None
@@ -104,11 +117,10 @@ class ProfileRead(BaseModel):
     resume_url: str | None
     location: str | None
     email: str | None
-    github_url: str | None
-    linkedin_url: str | None
     skills: list[SkillRead] = []
     experiences: list[ExperienceRead] = []
     education: list[EducationRead] = []
+    social_links: list[SocialLinkRead] = []
 
 
 class ProfileUpdate(BaseModel):
@@ -119,11 +131,10 @@ class ProfileUpdate(BaseModel):
     resume_url: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: EmailStr | None = None
-    github_url: str | None = Field(default=None, max_length=500)
-    linkedin_url: str | None = Field(default=None, max_length=500)
     skills: list[SkillCreate] | None = None
     experiences: list[ExperienceCreate] | None = None
     education: list[EducationCreate] | None = None
+    social_links: list[SocialLinkCreate] | None = None
 
 
 class ContactCreate(BaseModel):

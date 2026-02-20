@@ -34,8 +34,6 @@ class Profile(SQLModel, table=True):
     resume_url: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: str | None = Field(default=None, max_length=200)
-    github_url: str | None = Field(default=None, max_length=500)
-    linkedin_url: str | None = Field(default=None, max_length=500)
 
     skills: list["Skill"] = Relationship(
         back_populates="profile",
@@ -46,6 +44,11 @@ class Profile(SQLModel, table=True):
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
     education: list["Education"] = Relationship(
+        back_populates="profile",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+
+    social_links: list["SocialLink"] = Relationship(
         back_populates="profile",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
@@ -103,3 +106,13 @@ class Education(SQLModel, table=True):
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
     profile: Profile | None = Relationship(back_populates="education")
+
+
+class SocialLink(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    platform: str = Field(max_length=100)
+    url: str = Field(max_length=500)
+    display_order: int = Field(default=0)
+    profile_id: int | None = Field(default=None, foreign_key="profile.id")
+
+    profile: Profile | None = Relationship(back_populates="social_links")
