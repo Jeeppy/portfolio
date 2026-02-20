@@ -4,6 +4,8 @@ from sqlmodel import Session, select
 
 from app.models import ContactMessage
 
+CONTACT_URL = "/api/contact"
+
 
 @pytest.fixture
 def message(session: Session) -> ContactMessage:
@@ -18,7 +20,7 @@ def message(session: Session) -> ContactMessage:
 
 def test_send_message(client: TestClient, session: Session) -> None:
     response = client.post(
-        "/api/contact",
+        CONTACT_URL,
         json={
             "name": "a person",
             "email": "mail@test.com",
@@ -42,7 +44,7 @@ def test_send_message(client: TestClient, session: Session) -> None:
 
 def test_list_messages_admin(admin_client: TestClient, client: TestClient) -> None:
     client.post(
-        "/api/contact",
+        CONTACT_URL,
         json={
             "name": "first",
             "email": "first@test.com",
@@ -51,7 +53,7 @@ def test_list_messages_admin(admin_client: TestClient, client: TestClient) -> No
         },
     )
     client.post(
-        "/api/contact",
+        CONTACT_URL,
         json={
             "name": "second",
             "email": "second@test.com",
@@ -60,7 +62,7 @@ def test_list_messages_admin(admin_client: TestClient, client: TestClient) -> No
         },
     )
 
-    response = admin_client.get("/api/contact")
+    response = admin_client.get(CONTACT_URL)
     assert response.status_code == 200
 
     data = response.json()
@@ -73,7 +75,7 @@ def test_list_messages_admin(admin_client: TestClient, client: TestClient) -> No
 
 
 def test_list_messages_without_auth(client: TestClient) -> None:
-    response = client.get("/api/contact")
+    response = client.get(CONTACT_URL)
     assert response.status_code == 401
 
 
@@ -83,39 +85,39 @@ def test_mark_as_read(
     client: TestClient,
     message: ContactMessage,
 ) -> None:
-    response = admin_client.patch(f"/api/contact/{message.id}/read")
+    response = admin_client.patch(f"{CONTACT_URL}/{message.id}/read")
     assert response.status_code == 200
     assert message.read is True
 
 
 def test_mark_as_read_not_found(admin_client: TestClient) -> None:
-    response = admin_client.patch("/api/contact/999/read")
+    response = admin_client.patch(f"{CONTACT_URL}/999/read")
     assert response.status_code == 404
 
 
 def test_delete_message(admin_client: TestClient, message: ContactMessage) -> None:
-    response = admin_client.delete(f"/api/contact/{message.id}")
+    response = admin_client.delete(f"{CONTACT_URL}/{message.id}")
     assert response.status_code == 204
 
 
 def test_deleted_message_hidden_from_list(
     admin_client: TestClient, message: ContactMessage
 ) -> None:
-    admin_client.delete(f"/api/contact/{message.id}")
-    response = admin_client.get("/api/contact")
+    admin_client.delete(f"{CONTACT_URL}/{message.id}")
+    response = admin_client.get(CONTACT_URL)
     assert response.status_code == 200
     assert len(response.json()) == 0
 
 
 def test_delete_message_not_found(admin_client: TestClient) -> None:
-    response = admin_client.delete("/api/contact/999")
+    response = admin_client.delete(f"{CONTACT_URL}/999")
     assert response.status_code == 404
 
 
 def test_delete_message_without_auth(
     client: TestClient, message: ContactMessage
 ) -> None:
-    response = client.delete(f"/api/contact/{message.id}")
+    response = client.delete(f"{CONTACT_URL}/{message.id}")
     assert response.status_code == 401
 
 
@@ -131,7 +133,7 @@ def test_list_messages_pagination(admin_client: TestClient, session: Session) ->
         )
     session.commit()
 
-    response = admin_client.get("/api/contact?limit=2")
+    response = admin_client.get(f"{CONTACT_URL}?limit=2")
     assert response.status_code == 200
     assert len(response.json()) == 2
 
@@ -144,15 +146,15 @@ def test_create_message_rate_limited(client: TestClient) -> None:
         "message": "spam message",
     }
     for _ in range(5):
-        client.post("/api/contact/", json=payload)
+        client.post(f"{CONTACT_URL}/", json=payload)
 
-    response = client.post("/api/contact/", json=payload)
+    response = client.post(f"{CONTACT_URL}/", json=payload)
     assert response.status_code == 429
 
 
 def test_send_message_invalid_email(client: TestClient) -> None:
     response = client.post(
-        "/api/contact",
+        CONTACT_URL,
         json={
             "name": "a person",
             "email": "not-an-email",
@@ -165,7 +167,7 @@ def test_send_message_invalid_email(client: TestClient) -> None:
 
 def test_send_message_whitespace_only(client: TestClient) -> None:
     response = client.post(
-        "/api/contact/",
+        f"{CONTACT_URL}/",
         json={
             "name": "    ",
             "email": "mail@test.com",
@@ -178,7 +180,7 @@ def test_send_message_whitespace_only(client: TestClient) -> None:
 
 def test_send_message_too_long(client: TestClient) -> None:
     response = client.post(
-        "/api/contact",
+        CONTACT_URL,
         json={
             "name": "a person",
             "email": "mail@test.com",
@@ -203,6 +205,6 @@ def test_list_messages_pagination_offset_beyond_total(
         )
         session.commit()
 
-        response = admin_client.get("/api/contact?offset=10")
+        response = admin_client.get(f"{CONTACT_URL}?offset=10")
         assert response.status_code == 200
         assert response.json() == []

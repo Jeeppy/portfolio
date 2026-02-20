@@ -3,9 +3,11 @@ from sqlmodel import Session, select
 
 from app.models import Skill
 
+PROFILE_URL = "/api/profile"
+
 
 def test_get_profile_auto_create(client: TestClient) -> None:
-    response = client.get("/api/profile")
+    response = client.get(PROFILE_URL)
 
     assert response.status_code == 200
     data = response.json()
@@ -16,7 +18,7 @@ def test_get_profile_auto_create(client: TestClient) -> None:
 
 def test_update_profile(admin_client: TestClient) -> None:
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "full_name": "Jean-Pierre",
             "title": "Développeur",
@@ -33,7 +35,7 @@ def test_update_profile(admin_client: TestClient) -> None:
 
 def test_update_profile_with_skills(admin_client: TestClient) -> None:
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "skills": [
                 {"name": "Python", "category": "backend", "level": 5},
@@ -51,14 +53,14 @@ def test_update_profile_with_skills(admin_client: TestClient) -> None:
 
 def test_update_profile_replaces_skills(admin_client: TestClient) -> None:
     admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "skills": [{"name": "Python", "category": "backend", "level": 5}],
         },
     )
 
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "skills": [{"name": "Go", "category": "backend", "level": 3}],
         },
@@ -72,7 +74,7 @@ def test_update_profile_replaces_skills(admin_client: TestClient) -> None:
 
 def test_update_profile_with_experiences(admin_client: TestClient) -> None:
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "experiences": [
                 {
@@ -93,7 +95,7 @@ def test_update_profile_with_experiences(admin_client: TestClient) -> None:
 
 def test_update_profile_with_education(admin_client: TestClient) -> None:
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={
             "education": [
                 {"school": "MIT", "degree": "CS", "year": 2020},
@@ -108,15 +110,15 @@ def test_update_profile_with_education(admin_client: TestClient) -> None:
 
 
 def test_update_profile_without_auth(client: TestClient) -> None:
-    response = client.put("/api/profile", json={"full_name": "Nope"})
+    response = client.put(PROFILE_URL, json={"full_name": "Nope"})
 
     assert response.status_code == 401
 
 
 def test_update_profile_partial_update(admin_client: TestClient) -> None:
-    admin_client.put("/api/profile", json={"full_name": "Jean", "title": "Dev"})
+    admin_client.put(PROFILE_URL, json={"full_name": "Jean", "title": "Dev"})
 
-    response = admin_client.put("/api/profile", json={"bio": "new bio"})
+    response = admin_client.put(PROFILE_URL, json={"bio": "new bio"})
 
     assert response.status_code == 200
     data = response.json()
@@ -126,13 +128,13 @@ def test_update_profile_partial_update(admin_client: TestClient) -> None:
 
 def test_update_profile_invalid_skill_level(admin_client: TestClient) -> None:
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={"skills": [{"name": "Python", "category": "backend", "level": -1}]},
     )
     assert response.status_code == 422
 
     response = admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={"skills": [{"name": "Python", "category": "backend", "level": 11}]},
     )
     assert response.status_code == 422
@@ -142,12 +144,12 @@ def test_update_profile_cascade_deletes_skills(
     admin_client: TestClient, session: Session
 ) -> None:
     admin_client.put(
-        "/api/profile",
+        PROFILE_URL,
         json={"skills": [{"name": "Python", "category": "backend", "level": 5}]},
     )
     session.expire_all()
     assert len(session.exec(select(Skill)).all()) == 1
 
-    admin_client.put("/api/profile", json={"skills": []})
+    admin_client.put(PROFILE_URL, json={"skills": []})
     session.expire_all()
     assert len(session.exec(select(Skill)).all()) == 0
