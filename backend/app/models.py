@@ -10,6 +10,14 @@ class ProjectTagLink(SQLModel, table=True):
     tag_id: int | None = Field(default=None, foreign_key="tag.id", primary_key=True)
 
 
+class ProjectCategory(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True, index=True, max_length=100)
+    slug: str = Field(unique=True, index=True, max_length=100)
+
+    projects: list["Project"] = Relationship(back_populates="category")
+
+
 class Project(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(index=True, max_length=200)
@@ -18,12 +26,14 @@ class Project(SQLModel, table=True):
     published: bool = True
     demo_url: str | None = Field(default=None, max_length=500)
     repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = Field(default=None, foreign_key="projectcategory.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     tags: list["Tag"] = Relationship(
         back_populates="projects", link_model=ProjectTagLink
     )
+    category: ProjectCategory | None = Relationship(back_populates="projects")
 
 
 class Profile(SQLModel, table=True):
