@@ -16,6 +16,7 @@ class Project(SQLModel, table=True):
     slug: str = Field(unique=True, index=True, max_length=200)
     description: str | None = Field(default=None, max_length=5000)
     published: bool = True
+    demo_url: str | None = Field(default=None, max_length=500)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
