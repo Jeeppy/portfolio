@@ -4,11 +4,13 @@ import jwt
 from fastapi.testclient import TestClient
 
 _SECRET = "testsecretkey-that-is-long-enough-for-hs512-needs-at-least-64-bytes-here"
+AUTH_URL = "/api/auth"
 
 
 def test_login_success(client: TestClient) -> None:
     response = client.post(
-        "/api/auth/login", json={"email": "admin@test.com", "password": "testpassword"}
+        f"{AUTH_URL}/login",
+        json={"email": "admin@test.com", "password": "testpassword"},
     )
 
     assert response.status_code == 200
@@ -19,7 +21,7 @@ def test_login_success(client: TestClient) -> None:
 
 def test_login_wrong_password(client: TestClient) -> None:
     response = client.post(
-        "/api/auth/login",
+        f"{AUTH_URL}/login",
         json={
             "email": "admin@test.com",
             "password": "badpassword",
@@ -30,14 +32,14 @@ def test_login_wrong_password(client: TestClient) -> None:
 
 
 def test_me_without_token(client: TestClient) -> None:
-    response = client.get("/api/auth/me")
+    response = client.get(f"{AUTH_URL}/me")
 
     assert response.status_code == 401
     assert response.json()["detail"] == "Not authenticated"
 
 
 def test_me_with_token(admin_client: TestClient) -> None:
-    response = admin_client.get("/api/auth/me")
+    response = admin_client.get(f"{AUTH_URL}/me")
 
     assert response.status_code == 200
     assert response.json()["email"] == "admin@test.com"
@@ -45,7 +47,7 @@ def test_me_with_token(admin_client: TestClient) -> None:
 
 def test_login_nonexistent_email(client: TestClient) -> None:
     response = client.post(
-        "/api/auth/login",
+        f"{AUTH_URL}/login",
         json={"email": "nobody@test.com", "password": "testpassword"},
     )
     assert response.status_code == 401
@@ -58,14 +60,14 @@ def test_me_with_expired_token(client: TestClient) -> None:
         algorithm="HS256",
     )
     response = client.get(
-        "/api/auth/me", headers={"Authorization": f"Bearer {expired_token}"}
+        f"{AUTH_URL}/me", headers={"Authorization": f"Bearer {expired_token}"}
     )
     assert response.status_code == 401
 
 
 def test_me_with_invalid_token_format(client: TestClient) -> None:
     response = client.get(
-        "/api/auth/me", headers={"Authorization": "Bearer notavalidtoken"}
+        f"{AUTH_URL}/me", headers={"Authorization": "Bearer notavalidtoken"}
     )
     assert response.status_code == 401
 
@@ -77,6 +79,6 @@ def test_me_with_wrong_algorithm_token(client: TestClient) -> None:
         algorithm="HS512",
     )
     response = client.get(
-        "/api/auth/me", headers={"Authorization": f"Bearer {wrong_algo_token}"}
+        f"{AUTH_URL}/me", headers={"Authorization": f"Bearer {wrong_algo_token}"}
     )
     assert response.status_code == 401
