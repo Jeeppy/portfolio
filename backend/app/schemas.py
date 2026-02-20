@@ -8,6 +8,17 @@ class TagRead(BaseModel):
     name: str
 
 
+class ProjectCategoryCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    slug: str = Field(min_length=1, max_length=100)
+
+
+class ProjectCategoryRead(BaseModel):
+    id: int
+    name: str
+    slug: str
+
+
 class ProjectCreate(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     slug: str = Field(min_length=1, max_length=200)
@@ -16,6 +27,7 @@ class ProjectCreate(BaseModel):
     published: bool = True
     demo_url: str | None = Field(default=None, max_length=500)
     repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = None
 
 
 class ProjectUpdate(BaseModel):
@@ -26,6 +38,7 @@ class ProjectUpdate(BaseModel):
     published: bool | None = None
     demo_url: str | None = Field(default=None, max_length=500)
     repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = None
 
 
 class ProjectRead(BaseModel):
@@ -36,9 +49,10 @@ class ProjectRead(BaseModel):
     published: bool
     demo_url: str | None
     repository_url: str | None
+    tags: list[TagRead]
+    category: ProjectCategoryRead | None
     created_at: datetime
     updated_at: datetime
-    tags: list[TagRead]
 
 
 class LoginRequest(BaseModel):

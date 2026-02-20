@@ -6,7 +6,7 @@ from sqlalchemy import true
 from sqlmodel import Session, select
 
 from app.database import get_session
-from app.models import Project
+from app.models import Project, ProjectCategory
 from app.schemas import ProjectRead
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -17,14 +17,21 @@ logger = structlog.get_logger()
 def list_projects(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=10, ge=1, le=100),
+    category: str | None = Query(default=None),
     session: Session = Depends(get_session),
 ) -> Sequence[Project]:
     """List published projects.
 
-    Supports pagination via `offset` and `limit` (max 100)."""
-    statement = (
-        select(Project).where(Project.published == true()).offset(offset).limit(limit)
-    )
+    Supports pagination via `offset` and `limit` (max 100)
+    and optional filtering by category slug.
+    """
+    statement = select(Project).where(Project.published == true())
+
+    if category is not None:
+        statement = statement.join(ProjectCategory).where(
+            ProjectCategory.slug == category
+        )
+    statement = statement.offset(offset).limit(limit)
     return session.exec(statement).all()
 
 

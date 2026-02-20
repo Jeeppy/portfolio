@@ -52,6 +52,34 @@ def test_list_all_projects_requires_auth(client: TestClient) -> None:
     assert response.status_code == 401
 
 
+def test_list_projects_filter_by_category(
+    client: TestClient, admin_client: TestClient, session: Session
+) -> None:
+    from app.models import ProjectCategory
+
+    category = ProjectCategory(name="Web", slug="web")
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+
+    session.add(
+        Project(
+            title="Web Project",
+            slug="web-project",
+            published=True,
+            category_id=category.id,
+        )
+    )
+    session.add(Project(title="Other Project", slug="other-project", published=True))
+    session.commit()
+
+    response = client.get("/api/projects?category=web")
+    assert response.status_code == 200
+    slugs = [p["slug"] for p in response.json()]
+    assert "web-project" in slugs
+    assert "other-project" not in slugs
+
+
 def test_create_project(admin_client: TestClient, session: Session) -> None:
     response = admin_client.post(
         ADMIN_PROJECTS_URL,
