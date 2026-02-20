@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 from app.auth import get_current_admin
 from app.database import get_session
-from app.models import Education, Experience, Profile, Skill
+from app.models import Education, Experience, Profile, Skill, SocialLink
 from app.routers.profile import get_or_create_profile
 from app.schemas import ProfileRead, ProfileUpdate
 
@@ -29,6 +29,7 @@ def update_profile(
     skills_data = update_data.pop("skills", None)
     experiences_data = update_data.pop("experiences", None)
     education_data = update_data.pop("education", None)
+    social_links_data = update_data.pop("social_links", None)
 
     for key, value in update_data.items():
         setattr(profile, key, value)
@@ -44,6 +45,11 @@ def update_profile(
     if education_data is not None:
         profile.education = [
             Education(**e, profile_id=profile.id) for e in education_data
+        ]
+
+    if social_links_data is not None:
+        profile.social_links = [
+            SocialLink(**sl, profile_id=profile.id) for sl in social_links_data
         ]
 
     session.add(profile)
