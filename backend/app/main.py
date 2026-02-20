@@ -11,7 +11,10 @@ from slowapi.errors import RateLimitExceeded
 from app.config import get_settings
 from app.limiter import limiter
 from app.logging import setup_logging
-from app.routers import admin_projects, auth, contact, profile, projects
+from app.routers import auth, contact, profile, projects
+from app.routers.admin import contact as admin_contact
+from app.routers.admin import profile as admin_profile
+from app.routers.admin import projects as admin_projects
 
 settings = get_settings()
 
@@ -44,6 +47,8 @@ app.include_router(auth.router, prefix=settings.api_prefix)
 app.include_router(profile.router, prefix=settings.api_prefix)
 app.include_router(contact.router, prefix=settings.api_prefix)
 app.include_router(admin_projects.router, prefix=settings.api_prefix)
+app.include_router(admin_profile.router, prefix=settings.api_prefix)
+app.include_router(admin_contact.router, prefix=settings.api_prefix)
 
 
 @app.exception_handler(Exception)

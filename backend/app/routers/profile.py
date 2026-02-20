@@ -2,10 +2,9 @@ import structlog
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
-from app.auth import get_current_admin
 from app.database import get_session
-from app.models import Education, Experience, Profile, Skill
-from app.schemas import ProfileRead, ProfileUpdate
+from app.models import Profile
+from app.schemas import ProfileRead
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 logger = structlog.get_logger()
@@ -17,52 +16,10 @@ def get_profile(session: Session = Depends(get_session)) -> Profile:
 
     Creates and returns an empty profile if none exists yet.
     """
-    return _get_or_create_profile(session)
+    return get_or_create_profile(session)
 
 
-@router.put("", response_model=ProfileRead)
-def update_profile(
-    data: ProfileUpdate,
-    session: Session = Depends(get_session),
-    _: str = Depends(get_current_admin),
-) -> Profile:
-    """Update the portfolio profile (admin only).
-
-    Only provided fields are updated. Nested collections (skills, experiences, education) fully replace
-    the existing list when included.
-    """
-    profile = _get_or_create_profile(session)
-
-    update_data = data.model_dump(exclude_unset=True)
-    skills_data = update_data.pop("skills", None)
-    experiences_data = update_data.pop("experiences", None)
-    education_data = update_data.pop("education", None)
-
-    for key, value in update_data.items():
-        setattr(profile, key, value)
-
-    if skills_data is not None:
-        profile.skills = [Skill(**s, profile_id=profile.id) for s in skills_data]
-
-    if experiences_data is not None:
-        profile.experiences = [
-            Experience(**e, profile_id=profile.id) for e in experiences_data
-        ]
-
-    if education_data is not None:
-        profile.education = [
-            Education(**e, profile_id=profile.id) for e in education_data
-        ]
-
-    session.add(profile)
-    session.commit()
-    session.refresh(profile)
-
-    logger.info("Profile updated", profile_id=profile.id)
-    return profile
-
-
-def _get_or_create_profile(session: Session) -> Profile:
+def get_or_create_profile(session: Session) -> Profile:
     profile: Profile | None = session.exec(select(Profile)).first()
     if profile is None:
         profile = Profile()
