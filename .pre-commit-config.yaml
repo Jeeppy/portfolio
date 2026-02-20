@@ -36,6 +36,7 @@ repos:
         name: "Python · Check types"
         args: [--config-file, backend/pyproject.toml]
         files: ^backend/
+        exclude: ^backend/migrations/
         additional_dependencies: ["fastapi", "sqlmodel", "pydantic[mypy]"]
 
   - repo: https://github.com/pypa/pip-audit
@@ -69,7 +70,7 @@ repos:
         name: "Security · Detect private key"
       - id: check-added-large-files
         name: "Git · Block large files"
-        args: ['--maxkb=500']
+        args: ["--maxkb=500"]
       - id: check-merge-conflict
         name: "Git · Detect conflict markers"
 
