@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -386,3 +387,140 @@ def test_upload_resume_with_no_auth(client: TestClient, upload_dirs: None) -> No
     )
 
     assert response.status_code == 401
+
+
+def test_update_profile_with_alternance_education(admin_client: TestClient) -> None:
+    admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "experiences": [
+                {
+                    "company": "Acme",
+                    "position": "Dev",
+                    "start_date": "2022-09-01",
+                    "end_date": "2024-06-30",
+                }
+            ]
+        },
+    )
+    profile = admin_client.put(ADMIN_PROFILE_URL, json={}).json()
+    exp_id = profile["experiences"][0]["id"]
+
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "education": [
+                {
+                    "school": "IUT",
+                    "degree": "BUT Info",
+                    "year": 2024,
+                    "is_alternance": True,
+                    "experience_id": exp_id,
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 200
+    edu = response.json()["education"][0]
+    assert edu["is_alternance"] is True
+    assert edu["experience_id"] == exp_id
+    assert edu["experience"]["company"] == "Acme"
+
+
+def test_update_profile_education_experience_id_requires_is_alternance(
+    admin_client: TestClient,
+) -> None:
+    admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "experiences": [
+                {"company": "Acme", "position": "Dev", "start_date": "2022-09-01"}
+            ]
+        },
+    )
+    profile = admin_client.put(ADMIN_PROFILE_URL, json={}).json()
+    exp_id = profile["experiences"][0]["id"]
+
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "education": [
+                {
+                    "school": "IUT",
+                    "degree": "BUT",
+                    "year": 2024,
+                    "is_alternance": False,
+                    "experience_id": exp_id,
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_update_profile_education_invalid_experience_id(
+    admin_client: TestClient,
+) -> None:
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "education": [
+                {
+                    "school": "IUT",
+                    "degree": "BUT",
+                    "year": 2024,
+                    "is_alternance": True,
+                    "experience_id": 9999,
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_update_profile_education_experience_wrong_profile(
+    admin_client: TestClient, session: Session
+) -> None:
+    from app.models import Experience as ExpModel
+
+    orphan = ExpModel(
+        company="Other", position="Dev", start_date=date(2022, 1, 1), profile_id=9999
+    )
+    session.add(orphan)
+    session.commit()
+    session.refresh(orphan)
+
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={
+            "education": [
+                {
+                    "school": "IUT",
+                    "degree": "BUT",
+                    "year": 2024,
+                    "is_alternance": True,
+                    "experience_id": orphan.id,
+                }
+            ]
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_update_profile_education_default_not_alternance(
+    admin_client: TestClient,
+) -> None:
+    response = admin_client.put(
+        ADMIN_PROFILE_URL,
+        json={"education": [{"school": "MIT", "degree": "CS", "year": 2020}]},
+    )
+
+    assert response.status_code == 200
+    edu = response.json()["education"][0]
+    assert edu["is_alternance"] is False
+    assert edu["experience_id"] is None
+    assert edu["experience"] is None
