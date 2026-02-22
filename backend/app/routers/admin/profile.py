@@ -1,5 +1,5 @@
 import structlog
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlmodel import Session
 
 import app.uploads as file_uploads
@@ -44,9 +44,18 @@ def update_profile(
         ]
 
     if education_data is not None:
-        profile.education = [
-            Education(**e, profile_id=profile.id) for e in education_data
-        ]
+        education_list = []
+        for e in education_data:
+            exp_id = e.get("experience_id")
+            if exp_id is not None:
+                exp = session.get(Experience, exp_id)
+                if exp is None or exp.profile_id != profile.id:
+                    raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                        detail=f"Experience {exp_id} not found or does not belong to this profile",
+                    )
+            education_list.append(Education(**e, profile_id=profile.id))
+        profile.education = education_list
 
     if social_links_data is not None:
         profile.social_links = [

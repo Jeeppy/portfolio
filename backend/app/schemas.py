@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 
 class TagRead(BaseModel):
@@ -102,6 +102,15 @@ class EducationCreate(BaseModel):
     degree: str = Field(min_length=1, max_length=200)
     location: str | None = Field(default=None, max_length=200)
     year: int
+    is_alternance: bool = False
+    experience_id: int | None = None
+
+    @model_validator(mode="after")
+    def check_alternance_consistency(self) -> "EducationCreate":
+        """Ensure experience_id is only set when is_alternance is True."""
+        if self.experience_id is not None and not self.is_alternance:
+            raise ValueError("experience_id required is_alternance=True")
+        return self
 
 
 class EducationRead(BaseModel):
@@ -110,6 +119,9 @@ class EducationRead(BaseModel):
     degree: str
     location: str | None
     year: int
+    is_alternance: bool
+    experience_id: int | None
+    experience: ExperienceRead | None
 
 
 class SocialLinkCreate(BaseModel):

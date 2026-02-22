@@ -114,8 +114,11 @@ class Education(SQLModel, table=True):
     degree: str = Field(max_length=200)
     location: str | None = Field(default=None, max_length=200)
     year: int
+    is_alternance: bool = Field(default=False)
+    experience_id: int | None = Field(default=None, foreign_key="experience.id")
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
+    experience: Experience | None = Relationship()
     profile: Profile | None = Relationship(back_populates="education")
 
 
