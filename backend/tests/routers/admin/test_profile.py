@@ -1,9 +1,21 @@
+from pathlib import Path
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
+import app.uploads as file_uploads
 from app.models import Skill, SocialLink
 
 ADMIN_PROFILE_URL = "/api/admin/profile"
+AVATAR_URL = f"{ADMIN_PROFILE_URL}/avatar"
+RESUME_URL = f"{ADMIN_PROFILE_URL}/resume"
+
+
+@pytest.fixture
+def upload_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(file_uploads, "AVATAR_DIR", tmp_path / "avatars")
+    monkeypatch.setattr(file_uploads, "RESUME_DIR", tmp_path / "resumes")
 
 
 def test_update_profile(admin_client: TestClient) -> None:
@@ -207,3 +219,170 @@ def test_update_profile_cascade_deletes_social_links(
     admin_client.put(ADMIN_PROFILE_URL, json={"social_links": []})
     session.expire_all()
     assert len(session.exec(select(SocialLink)).all()) == 0
+
+
+def test_upload_avatar(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.post(
+        AVATAR_URL,
+        files={"file": ("avatar.jpg", b"fake-image-data", "image/jpeg")},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["avatar_filename"] is not None
+    assert data["avatar_filename"].endswith(".jpg")
+
+
+def test_upload_avatar_invalid_type(
+    admin_client: TestClient, upload_dirs: None
+) -> None:
+    response = admin_client.post(
+        AVATAR_URL, files={"file": ("resume.pdf", b"fake-pdf-data", "application/pdf")}
+    )
+
+    assert response.status_code == 415
+
+
+def test_upload_avatar_too_large(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.post(
+        AVATAR_URL,
+        files={
+            "file": ("big.jpg", b"x" * (file_uploads.AVATAR_MAX_SIZE + 1), "image/jpeg")
+        },
+    )
+
+    assert response.status_code == 413
+
+
+def test_upload_avatar_replaces_old(
+    admin_client: TestClient, upload_dirs: None, tmp_path: Path
+) -> None:
+    first = admin_client.post(
+        AVATAR_URL,
+        files={"file": ("first.jpg", b"first-image", "image/jpeg")},
+    )
+    old_filename = first.json()["avatar_filename"]
+    old_path = tmp_path / "avatars" / old_filename
+
+    second = admin_client.post(
+        AVATAR_URL,
+        files={"file": ("second.jpg", b"second-image", "image/jpeg")},
+    )
+
+    assert second.status_code == 200
+    assert second.json()["avatar_filename"] != old_filename
+    assert not old_path.exists()
+
+
+def test_delete_avatar(admin_client: TestClient, upload_dirs: None) -> None:
+    admin_client.post(
+        AVATAR_URL,
+        files={"file": ("avatar.jpg", b"fake-image-data", "image/jpeg")},
+    )
+
+    response = admin_client.delete(AVATAR_URL)
+
+    assert response.status_code == 200
+    assert response.json()["avatar_filename"] is None
+
+
+def test_delete_avatar_no_avatar(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.delete(AVATAR_URL)
+
+    assert response.status_code == 200
+    assert response.json()["avatar_filename"] is None
+
+
+def test_upload_avatar_with_no_auth(client: TestClient, upload_dirs: None) -> None:
+    response = client.post(
+        AVATAR_URL,
+        files={"file": ("avatar.jpg", b"fake-image-data", "image/jpeg")},
+    )
+
+    assert response.status_code == 401
+
+
+def test_upload_resume(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.post(
+        RESUME_URL,
+        files={"file": ("cv.pdf", b"fake-pdf-data", "application/pdf")},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["resume_filename"] is not None
+    assert data["resume_filename"].endswith(".pdf")
+
+
+def test_upload_resume_invalid_type(
+    admin_client: TestClient, upload_dirs: None
+) -> None:
+    response = admin_client.post(
+        RESUME_URL,
+        files={"file": ("avatar.jpg", b"fake-image-data", "image/jpeg")},
+    )
+
+    assert response.status_code == 415
+
+
+def test_upload_resume_too_large(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.post(
+        RESUME_URL,
+        files={
+            "file": (
+                "big.pdf",
+                b"x" * (file_uploads.RESUME_MAX_SIZE + 1),
+                "application/pdf",
+            )
+        },
+    )
+
+    assert response.status_code == 413
+
+
+def test_upload_resume_replaces_old(
+    admin_client: TestClient, upload_dirs: None, tmp_path: Path
+) -> None:
+    first = admin_client.post(
+        RESUME_URL,
+        files={"file": ("first.pdf", b"first-pdf", "application/pdf")},
+    )
+    old_filename = first.json()["resume_filename"]
+    old_path = tmp_path / "resumes" / old_filename
+
+    second = admin_client.post(
+        RESUME_URL,
+        files={"file": ("second.pdf", b"second-pdf", "application/pdf")},
+    )
+
+    assert second.status_code == 200
+    assert second.json()["resume_filename"] != old_filename
+    assert not old_path.exists()
+
+
+def test_delete_resume(admin_client: TestClient, upload_dirs: None) -> None:
+    admin_client.post(
+        RESUME_URL,
+        files={"file": ("cv.pdf", b"fake-pdf-data", "application/pdf")},
+    )
+
+    response = admin_client.delete(RESUME_URL)
+
+    assert response.status_code == 200
+    assert response.json()["resume_filename"] is None
+
+
+def test_delete_resume_no_resume(admin_client: TestClient, upload_dirs: None) -> None:
+    response = admin_client.delete(RESUME_URL)
+
+    assert response.status_code == 200
+    assert response.json()["resume_filename"] is None
+
+
+def test_upload_resume_with_no_auth(client: TestClient, upload_dirs: None) -> None:
+    response = client.post(
+        RESUME_URL,
+        files={"file": ("cv.pdf", b"fake-pdf-data", "application/pdf")},
+    )
+
+    assert response.status_code == 401

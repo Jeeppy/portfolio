@@ -41,8 +41,8 @@ class Profile(SQLModel, table=True):
     full_name: str | None = Field(default=None, max_length=200)
     title: str | None = Field(default=None, max_length=200)
     bio: str | None = Field(default=None, max_length=500)
-    avatar_url: str | None = Field(default=None, max_length=500)
-    resume_url: str | None = Field(default=None, max_length=500)
+    avatar_filename: str | None = Field(default=None, max_length=500)
+    resume_filename: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: str | None = Field(default=None, max_length=200)
 

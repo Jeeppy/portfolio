@@ -130,8 +130,8 @@ class ProfileRead(BaseModel):
     full_name: str | None
     title: str | None
     bio: str | None
-    avatar_url: str | None
-    resume_url: str | None
+    avatar_filename: str | None
+    resume_filename: str | None
     location: str | None
     email: str | None
     skills: list[SkillRead] = []
@@ -144,8 +144,6 @@ class ProfileUpdate(BaseModel):
     full_name: str | None = Field(default=None, min_length=1, max_length=200)
     title: str | None = Field(default=None, min_length=1, max_length=200)
     bio: str | None = Field(default=None, max_length=5000)
-    avatar_url: str | None = Field(default=None, max_length=500)
-    resume_url: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: EmailStr | None = None
     skills: list[SkillCreate] | None = None
