@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
@@ -186,3 +186,45 @@ class ContactRead(BaseModel):
     message: str
     read: bool
     created_at: datetime
+
+
+class AvailabilitySlotCreate(BaseModel):
+    day_of_week: int = Field(ge=0, le=6)
+    start_time: time
+    end_time: time
+    is_active: bool = True
+
+
+class AvailabilitySlotRead(BaseModel):
+    id: int
+    day_of_week: int
+    start_time: time
+    end_time: time
+    is_active: bool
+
+
+class AppointmentCreate(BaseModel):
+    visitor_name: str = Field(min_length=1, max_length=100)
+    visitor_email: EmailStr
+    subject: str | None = Field(default=None, max_length=200)
+    message: str | None = Field(default=None, max_length=2000)
+    appointment_date: date
+    start_time: time
+    end_time: time
+
+
+class AppointmentRead(BaseModel):
+    id: int
+    visitor_name: str
+    visitor_email: str
+    subject: str | None
+    message: str | None
+    appointment_date: date
+    start_time: time
+    end_time: time
+    status: str
+    created_at: datetime
+
+
+class AppointmentStatusUpdate(BaseModel):
+    status: str
