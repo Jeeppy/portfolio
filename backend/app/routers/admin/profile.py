@@ -1,7 +1,8 @@
 import structlog
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlmodel import Session
 
+import app.uploads as file_uploads
 from app.auth import get_current_admin
 from app.database import get_session
 from app.models import Education, Experience, Profile, Skill, SocialLink
@@ -57,4 +58,86 @@ def update_profile(
     session.refresh(profile)
 
     logger.info("Profile updated", profile_id=profile.id)
+    return profile
+
+
+@router.post("/avatar", response_model=ProfileRead)
+async def upload_avatar(
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> Profile:
+    """Upload or replace the profile avatar (admin only)."""
+    profile = get_or_create_profile(session)
+    if profile.avatar_filename:
+        file_uploads.delete_file(file_uploads.AVATAR_DIR, profile.avatar_filename)
+    filename = await file_uploads.save_upload(
+        file,
+        file_uploads.AVATAR_DIR,
+        file_uploads.ALLOWED_AVATAR_TYPES,
+        file_uploads.AVATAR_MAX_SIZE,
+    )
+    profile.avatar_filename = filename
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    logger.info("Avatar uploaded", profile_id=profile.id, filename=filename)
+    return profile
+
+
+@router.delete("/avatar", response_model=ProfileRead)
+def delete_avatar(
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> Profile:
+    """Delete the profile avatar (admin only)."""
+    profile = get_or_create_profile(session)
+    if profile.avatar_filename:
+        file_uploads.delete_file(file_uploads.AVATAR_DIR, profile.avatar_filename)
+        profile.avatar_filename = None
+        session.add(profile)
+        session.commit()
+        session.refresh(profile)
+        logger.info("Avatar deleted", profile_id=profile.id)
+    return profile
+
+
+@router.post("/resume", response_model=ProfileRead)
+async def upload_resume(
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> Profile:
+    """Upload or replace the profile resume (admin only)."""
+    profile = get_or_create_profile(session)
+    if profile.resume_filename:
+        file_uploads.delete_file(file_uploads.RESUME_DIR, profile.resume_filename)
+    filename = await file_uploads.save_upload(
+        file,
+        file_uploads.RESUME_DIR,
+        file_uploads.ALLOWED_RESUME_TYPES,
+        file_uploads.RESUME_MAX_SIZE,
+    )
+    profile.resume_filename = filename
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+    logger.info("Resume uploaded", profile_id=profile.id, filename=filename)
+    return profile
+
+
+@router.delete("/resume", response_model=ProfileRead)
+def delete_resume(
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> Profile:
+    """Delete the profile resume (admin only)."""
+    profile = get_or_create_profile(session)
+    if profile.resume_filename:
+        file_uploads.delete_file(file_uploads.RESUME_DIR, profile.resume_filename)
+        profile.resume_filename = None
+        session.add(profile)
+        session.commit()
+        session.refresh(profile)
+        logger.info("Resume deleted", profile_id=profile.id)
     return profile
