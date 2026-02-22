@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -130,3 +130,24 @@ class SocialLink(SQLModel, table=True):
     profile_id: int | None = Field(default=None, foreign_key="profile.id")
 
     profile: Profile | None = Relationship(back_populates="social_links")
+
+
+class AvailabilitySlot(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    day_of_week: int = Field(ge=0, le=6)
+    start_time: time = Field()
+    end_time: time = Field()
+    is_active: bool = Field(default=True)
+
+
+class Appointment(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    visitor_name: str = Field(max_length=100)
+    visitor_email: str = Field(max_length=200)
+    subject: str = Field(default="", max_length=200)
+    message: str = Field(default="", max_length=2000)
+    appointment_date: date = Field()
+    start_time: time = Field()
+    end_time: time = Field()
+    status: str = Field(default="pending")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
