@@ -122,18 +122,18 @@ pre-commit run --all-files
 
 ### Docker (dev)
 
-  ```bash
-  # Build et lancer l'API
-  docker compose up --build
+```bash
+# Build et lancer l'API
+docker compose up --build
 
-  # En arrière-plan
-  docker compose up -d
+# En arrière-plan
+docker compose up -d
 
-  # Logs
-  docker compose logs -f api
+# Logs
+docker compose logs -f api
 
-  # Arrêter
-  docker compose down
+# Arrêter
+docker compose down
 ```
 
 ## License
