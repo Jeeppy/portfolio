@@ -7,7 +7,7 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 | Layer        | Technology                                                                                                      |
 | ------------ | --------------------------------------------------------------------------------------------------------------- |
 | **Backend**  | [FastAPI](https://fastapi.tiangolo.com/) — Python 3.12                                                          |
-| **Frontend** | [Vue.js 3](https://vuejs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/)                           |
+| **Frontend** | [Next.js 15](https://nextjs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/) + [TanStack Query](https://tanstack.com/query) |
 | **Database** | SQLite via [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic](https://alembic.sqlalchemy.org/) (migrations) |
 | **Auth**     | JWT (single-user)                                                                                               |
 | **Deploy**   | [Coolify](https://coolify.io/) (self-hosted PaaS) + Cloudflare Tunnels                                          |
