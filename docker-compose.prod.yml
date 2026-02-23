@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - api_data:/app/data
+      - api_uploads:/app/uploads
+    env_file:
+      - ./backend/.venv
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2"
+    restart: unless-stopped
+volumes:
+  api_data:
+  api_uploads:

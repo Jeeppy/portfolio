@@ -4,14 +4,14 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 
 ## Tech Stack
 
-| Layer        | Technology                                                                            |
-| ------------ | ------------------------------------------------------------------------------------- |
-| **Backend**  | [FastAPI](https://fastapi.tiangolo.com/) — Python 3.12                                |
-| **Frontend** | [Vue.js 3](https://vuejs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/) |
+| Layer        | Technology                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| **Backend**  | [FastAPI](https://fastapi.tiangolo.com/) — Python 3.12                                                          |
+| **Frontend** | [Vue.js 3](https://vuejs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/)                           |
 | **Database** | SQLite via [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic](https://alembic.sqlalchemy.org/) (migrations) |
-| **Auth**     | JWT (single-user)                                                                     |
-| **Deploy**   | [Coolify](https://coolify.io/) (self-hosted PaaS) + Cloudflare Tunnels                |
-| **CI/CD**    | GitHub Actions → Proxmox (self-hosted)                                                |
+| **Auth**     | JWT (single-user)                                                                                               |
+| **Deploy**   | [Coolify](https://coolify.io/) (self-hosted PaaS) + Cloudflare Tunnels                                          |
+| **CI/CD**    | GitHub Actions → Proxmox (self-hosted)                                                                          |
 
 ### Code Quality
 
@@ -29,7 +29,7 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 - [pyenv](https://github.com/pyenv/pyenv) — Python version management
 - [uv](https://docs.astral.sh/uv/) — Fast Python package manager
 - [Node.js](https://nodejs.org/) ≥ 18 — For the Vue.js frontend
-- [Docker](https://www.docker.com/) & Docker Compose — For production deployment
+- [Docker](https://www.docker.com/) & Docker Compose — For containerized deployment
 
 ## Getting Started
 
@@ -118,6 +118,22 @@ pre-commit install
 
 # Run all hooks manually
 pre-commit run --all-files
+```
+
+### Docker (dev)
+
+  ```bash
+  # Build et lancer l'API
+  docker compose up --build
+
+  # En arrière-plan
+  docker compose up -d
+
+  # Logs
+  docker compose logs -f api
+
+  # Arrêter
+  docker compose down
 ```
 
 ## License
