@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to ghrc.ghrc.io
+      - name: Log in to ghrc.io
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -67,7 +67,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghrc.io/jeeppy/portfolio-api:develop
+          tags: ghcr.io/jeeppy/portfolio-api:develop
 
       - name: Trigger Coolify staging deployment
         run: |
