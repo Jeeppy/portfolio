@@ -39,11 +39,7 @@ def update_appointment_status(
     _: str = Depends(get_current_admin),
 ) -> Appointment:
     """Update the status of an appointment (admin only)."""
-    appointment = session.get(Appointment, appointment_id)
-    if appointment is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Appointment not found"
-        )
+    appointment = _get_appointment_or_404(appointment_id, session)
 
     allowed = VALID_TRANSITIONS.get(appointment.status, set())
     if data.status not in allowed:
@@ -69,11 +65,16 @@ def delete_appointment(
     _: str = Depends(get_current_admin),
 ) -> None:
     """Delete an appointment (admin only)."""
+    appointment = _get_appointment_or_404(appointment_id, session)
+    session.delete(appointment)
+    session.commit()
+    logger.info("Appointment deleted", appointement_id=appointment.id)
+
+
+def _get_appointment_or_404(appointment_id: int, session: Session) -> Appointment:
     appointment = session.get(Appointment, appointment_id)
     if appointment is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="APpointment not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Appointment not found"
         )
-    session.delete(appointment)
-    session.commit()
-    logger.info("Appointement deleted", appointement_id=appointment_id)
+    return appointment

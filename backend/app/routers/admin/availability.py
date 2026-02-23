@@ -15,7 +15,7 @@ logger = structlog.get_logger()
 def list_slots(
     session: Session = Depends(get_session), _: str = Depends(get_current_admin)
 ) -> list[AvailabilitySlot]:
-    """List all availability slogs (admin only)."""
+    """List all availability slots (admin only)."""
     return list(session.exec(select(AvailabilitySlot)).all())
 
 
