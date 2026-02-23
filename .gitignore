@@ -40,3 +40,9 @@ htmlcov/
 
 # Databases
 $.db
+
+# Uploads
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+uploads/resumes/*
+!uploads/resumes/.gitkeep

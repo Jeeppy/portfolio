@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -10,18 +10,30 @@ class ProjectTagLink(SQLModel, table=True):
     tag_id: int | None = Field(default=None, foreign_key="tag.id", primary_key=True)
 
 
+class ProjectCategory(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(unique=True, index=True, max_length=100)
+    slug: str = Field(unique=True, index=True, max_length=100)
+
+    projects: list["Project"] = Relationship(back_populates="category")
+
+
 class Project(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(index=True, max_length=200)
     slug: str = Field(unique=True, index=True, max_length=200)
     description: str | None = Field(default=None, max_length=5000)
     published: bool = True
+    demo_url: str | None = Field(default=None, max_length=500)
+    repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = Field(default=None, foreign_key="projectcategory.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     tags: list["Tag"] = Relationship(
         back_populates="projects", link_model=ProjectTagLink
     )
+    category: ProjectCategory | None = Relationship(back_populates="projects")
 
 
 class Profile(SQLModel, table=True):
@@ -29,12 +41,10 @@ class Profile(SQLModel, table=True):
     full_name: str | None = Field(default=None, max_length=200)
     title: str | None = Field(default=None, max_length=200)
     bio: str | None = Field(default=None, max_length=500)
-    avatar_url: str | None = Field(default=None, max_length=500)
-    resume_url: str | None = Field(default=None, max_length=500)
+    avatar_filename: str | None = Field(default=None, max_length=500)
+    resume_filename: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: str | None = Field(default=None, max_length=200)
-    github_url: str | None = Field(default=None, max_length=500)
-    linkedin_url: str | None = Field(default=None, max_length=500)
 
     skills: list["Skill"] = Relationship(
         back_populates="profile",
@@ -45,6 +55,11 @@ class Profile(SQLModel, table=True):
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
     education: list["Education"] = Relationship(
+        back_populates="profile",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+
+    social_links: list["SocialLink"] = Relationship(
         back_populates="profile",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
@@ -99,6 +114,40 @@ class Education(SQLModel, table=True):
     degree: str = Field(max_length=200)
     location: str | None = Field(default=None, max_length=200)
     year: int
+    is_alternance: bool = Field(default=False)
+    experience_id: int | None = Field(default=None, foreign_key="experience.id")
     profile_id: int | None = Field(default=None, foreign_key="profile.id", index=True)
 
+    experience: Experience | None = Relationship()
     profile: Profile | None = Relationship(back_populates="education")
+
+
+class SocialLink(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    platform: str = Field(max_length=100)
+    url: str = Field(max_length=500)
+    display_order: int = Field(default=0)
+    profile_id: int | None = Field(default=None, foreign_key="profile.id")
+
+    profile: Profile | None = Relationship(back_populates="social_links")
+
+
+class AvailabilitySlot(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    day_of_week: int = Field(ge=0, le=6)
+    start_time: time = Field()
+    end_time: time = Field()
+    is_active: bool = Field(default=True)
+
+
+class Appointment(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    visitor_name: str = Field(max_length=100)
+    visitor_email: str = Field(max_length=200)
+    subject: str | None = Field(default=None, max_length=200)
+    message: str | None = Field(default=None, max_length=2000)
+    appointment_date: date = Field()
+    start_time: time = Field()
+    end_time: time = Field()
+    status: str = Field(default="pending")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

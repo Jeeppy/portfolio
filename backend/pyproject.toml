@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "REST API for self-hosted developer portfolio — FastAPI + SQLModel"
 requires-python = ">=3.12.8"
 dependencies = [
+    "alembic>=1.18.4",
     "bcrypt>=5.0.0,<6",
     "email-validator>=2.3.0,<3",
     "fastapi[standard]>=0.128.7,<0.200",
@@ -56,6 +57,7 @@ known-first-party = ["app"]
 [tool.mypy]
 plugins = ["pydantic.mypy"]
 python_version = "3.12"
+exclude = ["migrations/"]
 cache_dir = "backend/.mypy_cache"
 warn_return_any = true
 warn_unused_configs = true

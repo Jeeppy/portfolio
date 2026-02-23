@@ -1,11 +1,22 @@
-from datetime import date, datetime
+from datetime import date, datetime, time
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 
 class TagRead(BaseModel):
     id: int
     name: str
+
+
+class ProjectCategoryCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    slug: str = Field(min_length=1, max_length=100)
+
+
+class ProjectCategoryRead(BaseModel):
+    id: int
+    name: str
+    slug: str
 
 
 class ProjectCreate(BaseModel):
@@ -14,6 +25,9 @@ class ProjectCreate(BaseModel):
     description: str | None = Field(default=None, max_length=5000)
     tags: list[str] = []
     published: bool = True
+    demo_url: str | None = Field(default=None, max_length=500)
+    repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = None
 
 
 class ProjectUpdate(BaseModel):
@@ -22,6 +36,9 @@ class ProjectUpdate(BaseModel):
     description: str | None = Field(default=None, max_length=5000)
     tags: list[str] | None = None
     published: bool | None = None
+    demo_url: str | None = Field(default=None, max_length=500)
+    repository_url: str | None = Field(default=None, max_length=500)
+    category_id: int | None = None
 
 
 class ProjectRead(BaseModel):
@@ -30,9 +47,12 @@ class ProjectRead(BaseModel):
     slug: str
     description: str | None
     published: bool
+    demo_url: str | None
+    repository_url: str | None
+    tags: list[TagRead]
+    category: ProjectCategoryRead | None
     created_at: datetime
     updated_at: datetime
-    tags: list[TagRead]
 
 
 class LoginRequest(BaseModel):
@@ -82,6 +102,15 @@ class EducationCreate(BaseModel):
     degree: str = Field(min_length=1, max_length=200)
     location: str | None = Field(default=None, max_length=200)
     year: int
+    is_alternance: bool = False
+    experience_id: int | None = None
+
+    @model_validator(mode="after")
+    def check_alternance_consistency(self) -> "EducationCreate":
+        """Ensure experience_id is only set when is_alternance is True."""
+        if self.experience_id is not None and not self.is_alternance:
+            raise ValueError("experience_id required is_alternance=True")
+        return self
 
 
 class EducationRead(BaseModel):
@@ -90,6 +119,22 @@ class EducationRead(BaseModel):
     degree: str
     location: str | None
     year: int
+    is_alternance: bool
+    experience_id: int | None
+    experience: ExperienceRead | None
+
+
+class SocialLinkCreate(BaseModel):
+    platform: str = Field(min_length=1, max_length=100)
+    url: str = Field(min_length=1, max_length=500)
+    display_order: int = Field(default=0)
+
+
+class SocialLinkRead(BaseModel):
+    id: int
+    platform: str
+    url: str
+    display_order: int
 
 
 class ProfileRead(BaseModel):
@@ -97,30 +142,26 @@ class ProfileRead(BaseModel):
     full_name: str | None
     title: str | None
     bio: str | None
-    avatar_url: str | None
-    resume_url: str | None
+    avatar_filename: str | None
+    resume_filename: str | None
     location: str | None
     email: str | None
-    github_url: str | None
-    linkedin_url: str | None
     skills: list[SkillRead] = []
     experiences: list[ExperienceRead] = []
     education: list[EducationRead] = []
+    social_links: list[SocialLinkRead] = []
 
 
 class ProfileUpdate(BaseModel):
     full_name: str | None = Field(default=None, min_length=1, max_length=200)
     title: str | None = Field(default=None, min_length=1, max_length=200)
     bio: str | None = Field(default=None, max_length=5000)
-    avatar_url: str | None = Field(default=None, max_length=500)
-    resume_url: str | None = Field(default=None, max_length=500)
     location: str | None = Field(default=None, max_length=200)
     email: EmailStr | None = None
-    github_url: str | None = Field(default=None, max_length=500)
-    linkedin_url: str | None = Field(default=None, max_length=500)
     skills: list[SkillCreate] | None = None
     experiences: list[ExperienceCreate] | None = None
     education: list[EducationCreate] | None = None
+    social_links: list[SocialLinkCreate] | None = None
 
 
 class ContactCreate(BaseModel):
@@ -145,3 +186,45 @@ class ContactRead(BaseModel):
     message: str
     read: bool
     created_at: datetime
+
+
+class AvailabilitySlotCreate(BaseModel):
+    day_of_week: int = Field(ge=0, le=6)
+    start_time: time
+    end_time: time
+    is_active: bool = True
+
+
+class AvailabilitySlotRead(BaseModel):
+    id: int
+    day_of_week: int
+    start_time: time
+    end_time: time
+    is_active: bool
+
+
+class AppointmentCreate(BaseModel):
+    visitor_name: str = Field(min_length=1, max_length=100)
+    visitor_email: EmailStr
+    subject: str | None = Field(default=None, max_length=200)
+    message: str | None = Field(default=None, max_length=2000)
+    appointment_date: date
+    start_time: time
+    end_time: time
+
+
+class AppointmentRead(BaseModel):
+    id: int
+    visitor_name: str
+    visitor_email: str
+    subject: str | None
+    message: str | None
+    appointment_date: date
+    start_time: time
+    end_time: time
+    status: str
+    created_at: datetime
+
+
+class AppointmentStatusUpdate(BaseModel):
+    status: str
