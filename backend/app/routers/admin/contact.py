@@ -75,8 +75,7 @@ def delete_message(
 
 
 def get_message_or_404(message_id: int, session: Session) -> ContactMessage:
-    statement = select(ContactMessage).where(ContactMessage.id == message_id)
-    message = session.exec(statement).first()
+    message = session.get(ContactMessage, message_id)
     if message is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"

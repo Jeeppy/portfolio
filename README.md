@@ -10,7 +10,7 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 | **Frontend** | [Vue.js 3](https://vuejs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/) |
 | **Database** | SQLite via [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic](https://alembic.sqlalchemy.org/) (migrations) |
 | **Auth**     | JWT (single-user)                                                                     |
-| **Deploy**   | Docker + [Caddy](https://caddyserver.com/) (reverse proxy & auto-HTTPS)               |
+| **Deploy**   | [Coolify](https://coolify.io/) (self-hosted PaaS) + Cloudflare Tunnels                |
 | **CI/CD**    | GitHub Actions → Proxmox (self-hosted)                                                |
 
 ### Code Quality

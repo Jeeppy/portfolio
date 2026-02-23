@@ -41,7 +41,7 @@ def get_available_slots(
     return [s for s in active_slots if s.start_time not in booked_times]
 
 
-@router.post("", response_model=AppointmentRead, status_code=201)
+@router.post("", response_model=AppointmentRead, status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/hour")
 def create_appointment(
     request: Request,
@@ -51,7 +51,7 @@ def create_appointment(
     if data.appointment_date < date.today():
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            detail="Appointment date mist be in the future",
+            detail="Appointment date must be in the future",
         )
 
     already_booked = session.exec(
@@ -59,6 +59,7 @@ def create_appointment(
             Appointment.appointment_date == data.appointment_date,
             Appointment.start_time == data.start_time,
             Appointment.status != "declined",
+            Appointment.status != "cancelled",
         )
     ).first()
 
