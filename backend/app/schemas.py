@@ -1,4 +1,5 @@
 from datetime import date, datetime, time
+from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
@@ -227,4 +228,4 @@ class AppointmentRead(BaseModel):
 
 
 class AppointmentStatusUpdate(BaseModel):
-    status: str
+    status: Literal["confirmed", "declined", "cancelled"]

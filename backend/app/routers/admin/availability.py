@@ -42,7 +42,7 @@ def delete_slot(
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> None:
-    """Delete an availability slot (admin slot)."""
+    """Delete an availability slot (admin only)."""
     slot = session.get(AvailabilitySlot, slot_id)
     if slot is None:
         raise HTTPException(
