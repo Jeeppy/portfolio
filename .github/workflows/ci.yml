@@ -75,6 +75,39 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
             "${{ secrets.COOLIFY_STAGING_WEBHOOK_URL }}"
 
+  deploy-staging-frontend:
+    needs: [backend]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: ghcr.io/jeeppy/portfolio-frontend:develop
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://staging-portfolio-api.debaene.fr
+
+      - name: Trigger Coolify staging deployment
+        run: |
+          curl -s -X GET \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            "${{ secrets.COOLIFY_STAGING_FRONTEND_WEBHOOK_URL }}"
+
   deploy-production:
     needs: [backend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -107,3 +140,38 @@ jobs:
           curl -s -X GET \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
             "${{ secrets.COOLIFY_PROD_WEBHOOK_URL }}"
+
+  deploy-production-frontend:
+    needs: [backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ghcr.io/jeeppy/portfolio-frontend:latest
+            ghcr.io/jeeppy/portfolio-frontend:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://portfolio-api.debaene.fr
+
+      - name: Trigger Coolify production deployment
+        run: |
+          curl -s -X GET \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            "${{ secrets.COOLIFY_PROD_FRONTEND_WEBHOOK_URL }}"
