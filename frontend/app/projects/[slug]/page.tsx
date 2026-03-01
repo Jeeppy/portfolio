@@ -1,0 +1,45 @@
+import { apiFetch } from "@/lib/api";
+import { Project } from "@/types/api";
+import Link from "next/link";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const project = await apiFetch<Project>(`/api/projects/${slug}`);
+  return {
+    title: project.title,
+    description: project.description ?? undefined,
+  };
+}
+
+export default async function GetProject({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const project = await apiFetch<Project>(`/api/projects/${slug}`);
+
+  return (
+    <main>
+      <h1>{project.title}</h1>
+      <p>{project.description}</p>
+      <ul>
+        {project.repository_url && (
+          <li>
+            <Link href={project.repository_url}>Dépot</Link>
+          </li>
+        )}
+        {project.demo_url && (
+          <li>
+            <Link href={project.demo_url}>Démo</Link>
+          </li>
+        )}
+      </ul>
+    </main>
+  );
+}

@@ -1,6 +1,6 @@
 export interface Profile {
   id: number;
-  name: string;
+  full_name: string;
   title: string | null;
   bio: string | null;
   email: string | null;
@@ -8,6 +8,8 @@ export interface Profile {
   avatar_filename: string | null;
   resume_filename: string | null;
   social_links: SocialLink[];
+  skills: Skill[];
+  experiences: Experience[];
 }
 
 export interface SocialLink {
@@ -36,7 +38,7 @@ export interface ProjectCategory {
 export interface Skill {
   id: number;
   name: string;
-  level: string | null;
+  level: number | null;
   category: string | null;
 }
 
@@ -44,6 +46,7 @@ export interface Experience {
   id: number;
   company: string;
   position: string;
+  location: string | null;
   description: string | null;
   start_date: string;
   end_date: string | null;
@@ -64,6 +67,7 @@ export interface ContactMessage {
   id: number;
   name: string;
   email: string;
+  subject: string;
   message: string;
   created_at: string;
 }
