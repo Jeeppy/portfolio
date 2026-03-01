@@ -1,7 +1,11 @@
 import { apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
 import Link from "next/link";
-import { Metadata } from "next";
+import { cache } from "react";
+
+const getProject = cache((slug: string) =>
+  apiFetch<Project>(`/api/projects/${slug}`),
+);
 
 export async function generateMetadata({
   params,
@@ -9,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = await apiFetch<Project>(`/api/projects/${slug}`);
+  const project = await getProject(slug);
   return {
     title: project.title,
     description: project.description ?? undefined,
@@ -22,7 +26,7 @@ export default async function GetProject({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = await apiFetch<Project>(`/api/projects/${slug}`);
+  const project = await getProject(slug);
 
   return (
     <main>
