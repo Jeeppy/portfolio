@@ -2,6 +2,8 @@ import { apiFetch } from "@/lib/api";
 import { Profile } from "@/types/api";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const profile = await apiFetch<Profile>("/api/profile");
   const socialLinks = profile.social_links.map((link) => (
