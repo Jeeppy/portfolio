@@ -1,6 +1,8 @@
 import { apiFetch } from "@/lib/api";
 import { Profile } from "@/types/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function SkillsPage() {
   const profile = await apiFetch<Profile>("/api/profile");
   const skills = profile.skills;
