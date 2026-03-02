@@ -1,11 +1,10 @@
 import { apiFetch } from "@/lib/api";
-import { Profile } from "@/types/api";
+import { Skill } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function SkillsPage() {
-  const profile = await apiFetch<Profile>("/api/profile");
-  const skills = profile.skills;
+  const skills = await apiFetch<Skill[]>("/api/skills");
   const groupedSkills = skills.reduce<Record<string, typeof skills>>(
     (acc, skill) => {
       const key = skill.category ?? "Autres";
