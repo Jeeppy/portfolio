@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function ListProjects() {
+export default async function ProjectsPage() {
   const projects = await apiFetch<Project[]>("/api/projects");
   const projectsItems = projects.map((project) => (
     <li key={project.id}>
