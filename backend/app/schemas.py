@@ -72,6 +72,12 @@ class SkillCreate(BaseModel):
     level: int = Field(default=0, ge=0, le=10)
 
 
+class SkillUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    category: str | None = Field(default=None, max_length=100)
+    level: int | None = Field(default=None, ge=0, le=10)
+
+
 class SkillRead(BaseModel):
     id: int
     name: str

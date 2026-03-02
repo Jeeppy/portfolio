@@ -13,13 +13,14 @@ import app.uploads as file_uploads
 from app.config import get_settings
 from app.limiter import limiter
 from app.logging import setup_logging
-from app.routers import appointments, auth, contact, profile, projects
+from app.routers import appointments, auth, contact, profile, projects, skills
 from app.routers.admin import appointments as admin_appointments
 from app.routers.admin import availability as admin_availability
 from app.routers.admin import categories as admin_categories
 from app.routers.admin import contact as admin_contact
 from app.routers.admin import profile as admin_profile
 from app.routers.admin import projects as admin_projects
+from app.routers.admin import skills as admin_skills
 
 settings = get_settings()
 
@@ -56,12 +57,14 @@ app.include_router(auth.router, prefix=settings.api_prefix)
 app.include_router(profile.router, prefix=settings.api_prefix)
 app.include_router(contact.router, prefix=settings.api_prefix)
 app.include_router(appointments.router, prefix=settings.api_prefix)
+app.include_router(skills.router, prefix=settings.api_prefix)
 app.include_router(admin_categories.router, prefix=settings.api_prefix)
 app.include_router(admin_projects.router, prefix=settings.api_prefix)
 app.include_router(admin_profile.router, prefix=settings.api_prefix)
 app.include_router(admin_contact.router, prefix=settings.api_prefix)
 app.include_router(admin_appointments.router, prefix=settings.api_prefix)
 app.include_router(admin_availability.router, prefix=settings.api_prefix)
+app.include_router(admin_skills.router, prefix=settings.api_prefix)
 
 
 @app.exception_handler(Exception)
