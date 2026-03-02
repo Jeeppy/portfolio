@@ -3,6 +3,8 @@ import { Project } from "@/types/api";
 import Link from "next/link";
 import { cache } from "react";
 
+export const dynamic = "force-dynamic";
+
 const getProject = cache((slug: string) =>
   apiFetch<Project>(`/api/projects/${slug}`),
 );
