@@ -44,6 +44,13 @@ def test_create_skill_without_auth(client: TestClient) -> None:
     assert response.status_code == 401
 
 
+def test_create_skill_duplicate_skill(admin_client: TestClient, skill: Skill) -> None:
+    response = admin_client.post(
+        ADMIN_SKILL_URL, json={"name": "Python", "category": "Backend", "level": 7}
+    )
+    assert response.status_code == 409
+
+
 def test_update_skill(admin_client: TestClient, skill: Skill) -> None:
     response = admin_client.put(
         f"{ADMIN_SKILL_URL}/{skill.id}", json={"category": "new category"}

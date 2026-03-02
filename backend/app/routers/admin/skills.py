@@ -1,5 +1,6 @@
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 from app.auth import get_current_admin
@@ -28,16 +29,23 @@ def create_skill(
     _: str = Depends(get_current_admin),
 ) -> Skill:
     """Create a new skill (admin only)."""
-    profile_id = get_or_create_profile(session).id
-    skill = Skill(**data.model_dump())
-    skill.profile_id = profile_id
+    try:
+        profile_id = get_or_create_profile(session).id
+        skill = Skill(**data.model_dump())
+        skill.profile_id = profile_id
 
-    session.add(skill)
-    session.commit()
-    session.refresh(skill)
+        session.add(skill)
+        session.commit()
+        session.refresh(skill)
 
-    logger.info("Skill created", name=skill.name)
-    return skill
+        logger.info("Skill created", name=skill.name)
+        return skill
+    except IntegrityError as error:
+        session.rollback()
+        logger.warning("Duplicate skill name", name=data.name)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Skill already exists"
+        ) from error
 
 
 @router.put("/{id}", response_model=SkillRead)
