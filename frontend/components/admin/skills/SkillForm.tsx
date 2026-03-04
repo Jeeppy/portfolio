@@ -11,7 +11,7 @@ export default function SkillForm({ initialData }: { initialData?: Skill }) {
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
     category: initialData?.category ?? "",
-    level: initialData?.level ?? undefined,
+    level: initialData?.level ?? 0,
   });
   const [error, setError] = useState<string | null>(null);
 
