@@ -1,13 +1,15 @@
 import { apiFetch } from "@/lib/api";
 import { Skill } from "@/types/api";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function SkillsPage() {
+  const t = await getTranslations("skills");
   const skills = await apiFetch<Skill[]>("/api/skills");
   const groupedSkills = skills.reduce<Record<string, typeof skills>>(
     (acc, skill) => {
-      const key = skill.category ?? "Autres";
+      const key = skill.category ?? t("other");
       if (!acc[key]) {
         acc[key] = [];
       }
@@ -19,7 +21,7 @@ export default async function SkillsPage() {
 
   return (
     <main>
-      <h1>Compétences</h1>
+      <h1>{t("title")}</h1>
       {Object.entries(groupedSkills).map(([category, categorySkills]) => (
         <section key={category}>
           <h2>{category}</h2>

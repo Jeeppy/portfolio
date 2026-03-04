@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "experiences": "Expériences",
+    "contact": "Contact"
+  },
+  "skills": {
+    "title": "Compétences",
+    "other": "Autres"
+  },
+  "experiences": {
+    "title": "Expériences",
+    "to": "à",
+    "present": "aujourd'hui"
+  },
+  "contact": {
+    "title": "Contact",
+    "submit": "Envoyer"
+  },
+  "project": {
+    "repository": "Dépôt",
+    "demo": "Démo"
+  }
+}

@@ -1,7 +1,8 @@
 import { apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { cache } from "react";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ const getProject = cache((slug: string) =>
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
   const { slug } = await params;
   const project = await getProject(slug);
@@ -28,6 +29,7 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = await getTranslations("project");
   const project = await getProject(slug);
 
   return (
@@ -37,12 +39,12 @@ export default async function ProjectPage({
       <ul>
         {project.repository_url && (
           <li>
-            <Link href={project.repository_url}>Dépot</Link>
+            <Link href={project.repository_url}>{t("repository")}</Link>
           </li>
         )}
         {project.demo_url && (
           <li>
-            <Link href={project.demo_url}>Démo</Link>
+            <Link href={project.demo_url}>{t("demo")}</Link>
           </li>
         )}
       </ul>

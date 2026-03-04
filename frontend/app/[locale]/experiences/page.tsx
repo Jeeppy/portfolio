@@ -1,15 +1,17 @@
 import { apiFetch } from "@/lib/api";
 import { Profile } from "@/types/api";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExperiencesPage() {
   const profile = await apiFetch<Profile>("/api/profile");
   const experiences = profile.experiences;
+  const t = await getTranslations("experiences");
 
   return (
     <main>
-      <h1>Experiences</h1>
+      <h1>{t("title")}</h1>
       {experiences.map((experience) => (
         <section key={experience.id}>
           <h2>
@@ -20,14 +22,14 @@ export default async function ExperiencesPage() {
             {new Date(experience.start_date).toLocaleDateString("fr-Fr", {
               year: "numeric",
               month: "long",
-            })}
-            {" à "}
+            })}{" "}
+            {t("to")}{" "}
             {experience.end_date
               ? new Date(experience.end_date).toLocaleDateString("fr-Fr", {
                   year: "numeric",
                   month: "long",
                 })
-              : "aujourd'hui"}
+              : t("present")}
           </p>
           <p style={{ whiteSpace: "pre-line" }}>{experience.description}</p>
         </section>
