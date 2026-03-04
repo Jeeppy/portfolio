@@ -4,11 +4,15 @@ import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function ExperiencesPage() {
+export default async function ExperiencesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const profile = await apiFetch<Profile>("/api/profile");
   const experiences = profile.experiences;
   const t = await getTranslations("experiences");
-
+  const locale = (await params).locale;
   return (
     <main>
       <h1>{t("title")}</h1>
@@ -19,13 +23,13 @@ export default async function ExperiencesPage() {
           </h2>
           <p>{experience.location}</p>
           <p>
-            {new Date(experience.start_date).toLocaleDateString("fr-Fr", {
+            {new Date(experience.start_date).toLocaleDateString(locale, {
               year: "numeric",
               month: "long",
             })}{" "}
             {t("to")}{" "}
             {experience.end_date
-              ? new Date(experience.end_date).toLocaleDateString("fr-Fr", {
+              ? new Date(experience.end_date).toLocaleDateString(locale, {
                   year: "numeric",
                   month: "long",
                 })

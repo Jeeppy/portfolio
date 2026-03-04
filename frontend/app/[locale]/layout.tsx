@@ -1,7 +1,6 @@
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import Providers from "../providers";
 import { Geist, Geist_Mono } from "next/font/google";

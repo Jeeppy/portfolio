@@ -20,7 +20,7 @@ export default async function AdminProjectsPage({
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       const { locale } = await params;
-      return redirect(`${locale}/admin/login`);
+      return redirect(`/${locale}/admin/login`);
     } else {
       throw error;
     }
