@@ -3,6 +3,18 @@ import { getMessages } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
+import Providers from "../providers";
+import { Geist, Geist_Mono } from "next/font/google";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export default async function LocaleLayout({
   children,
@@ -16,16 +28,22 @@ export default async function LocaleLayout({
   const t = await getTranslations("nav");
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <nav>
-        <Link href="/">{t("home")}</Link>
-        <Link href="/projects">{t("projects")}</Link>
-        <Link href="/skills">{t("skills")}</Link>
-        <Link href="/experiences">{t("experiences")}</Link>
-        <Link href="/contact">{t("contact")}</Link>
-      </nav>
-      <LocaleSwitcher />
-      {children}
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <nav>
+            <Link href="/">{t("home")}</Link>
+            <Link href="/projects">{t("projects")}</Link>
+            <Link href="/skills">{t("skills")}</Link>
+            <Link href="/experiences">{t("experiences")}</Link>
+            <Link href="/contact">{t("contact")}</Link>
+          </nav>
+          <LocaleSwitcher />
+          <Providers>{children}</Providers>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
