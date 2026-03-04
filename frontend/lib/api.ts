@@ -1,5 +1,14 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   options?: RequestInit,
@@ -13,7 +22,7 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
-    throw new Error(`API error: ${res.status}`);
+    throw new ApiError(`API error: ${res.status}`, res.status);
   }
 
   return res.json() as Promise<T>;

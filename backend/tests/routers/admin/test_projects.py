@@ -80,6 +80,42 @@ def test_list_projects_filter_by_category(
     assert "other-project" not in slugs
 
 
+def test_get_project(
+    admin_client: TestClient, project: Project, session: Session
+) -> None:
+    response = admin_client.get(f"{ADMIN_PROJECTS_URL}/{project.slug}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["slug"] == project.slug
+    assert data["title"] == project.title
+    assert data["description"] == project.description
+    assert data["published"] == project.published
+
+
+def test_get_project_not_published(
+    admin_client: TestClient, unpublished_project: Project, session: Session
+) -> None:
+    response = admin_client.get(f"{ADMIN_PROJECTS_URL}/{unpublished_project.slug}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["slug"] == unpublished_project.slug
+    assert data["title"] == unpublished_project.title
+    assert data["description"] == unpublished_project.description
+    assert data["published"] == unpublished_project.published
+
+
+def test_get_project_not_found(admin_client: TestClient) -> None:
+    response = admin_client.get(f"{ADMIN_PROJECTS_URL}/not-found")
+    assert response.status_code == 404
+
+
+def test_get_project_without_auth(client: TestClient, project: Project) -> None:
+    response = client.get(f"{ADMIN_PROJECTS_URL}/{project.slug}")
+    assert response.status_code == 401
+
+
 def test_create_project(admin_client: TestClient, session: Session) -> None:
     response = admin_client.post(
         ADMIN_PROJECTS_URL,

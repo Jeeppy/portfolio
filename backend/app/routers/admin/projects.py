@@ -24,6 +24,18 @@ def list_all_projects(
     return session.exec(select(Project)).all()
 
 
+@router.get("/{slug}", response_model=ProjectRead)
+def get_project(
+    slug: str,
+    session: Session = Depends(get_session),
+    _: str = Depends(get_current_admin),
+) -> Project:
+    """Get a project by its slug.
+
+    Returns 404 if the project does not exist."""
+    return get_project_or_404(slug, session)
+
+
 @router.post("", response_model=ProjectRead, status_code=status.HTTP_201_CREATED)
 def create_project(
     data: ProjectCreate,
