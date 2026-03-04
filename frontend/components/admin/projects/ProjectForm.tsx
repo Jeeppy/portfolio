@@ -1,5 +1,6 @@
 "use client";
 
+import { ApiError, apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +20,7 @@ export default function ProjectForm({
     repository_url: initialData?.repository_url ?? "",
     published: initialData?.published ?? true,
   });
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,28 +31,31 @@ export default function ProjectForm({
       ?.split("=")[1];
 
     const method = initialData ? "PUT" : "POST";
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/admin/projects`;
+    let url = `/api/admin/projects`;
     if (initialData) {
       url += `/${initialData.slug}`;
     }
-
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(form),
-    });
-
-    if (response.ok) {
+    try {
+      await apiFetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(form),
+      });
       router.push("/admin/projects");
-    } else {
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 409) setError("Ce slug existe déjà.");
+        else setError("Une erreur est survenue.");
+      }
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
+      {error && <p>{error}</p>}
       <label>Titre</label>
       <input
         name="title"
