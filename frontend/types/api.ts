@@ -26,7 +26,10 @@ export interface Project {
   demo_url: string | null;
   repository_url: string | null;
   category: ProjectCategory | null;
+  tags: Tag[] | null;
+  published: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface ProjectCategory {
@@ -79,4 +82,9 @@ export interface Appointment {
   message: string | null;
   status: "pending" | "confirmed" | "cancelled";
   created_at: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
 }
