@@ -1,7 +1,7 @@
 "use client";
 
 import { ApiError, apiFetch } from "@/lib/api";
-import { getClientToken } from "@/lib/auth";
+import { getClientToken } from "@/lib/auth.client";
 import { Project } from "@/types/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
