@@ -1,6 +1,7 @@
 "use client";
 
 import { ApiError, apiFetch } from "@/lib/api";
+import { getClientToken } from "@/lib/auth";
 import { Project } from "@/types/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,13 +23,8 @@ export default function ProjectForm({
   });
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    const token = document.cookie
-      .split("; ")
-      .find((c) => c.startsWith("token="))
-      ?.split("=")[1];
 
     const method = initialData ? "PUT" : "POST";
     let url = `/api/admin/projects`;
@@ -39,8 +35,7 @@ export default function ProjectForm({
       await apiFetch(url, {
         method: method,
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getClientToken()}`,
         },
         body: JSON.stringify(form),
       });
