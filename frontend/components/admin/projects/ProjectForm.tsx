@@ -3,7 +3,7 @@
 import { ApiError, apiFetch } from "@/lib/api";
 import { getClientToken } from "@/lib/auth.client";
 import { Project } from "@/types/api";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
 export default function ProjectForm({

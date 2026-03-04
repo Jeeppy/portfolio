@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api";
 import { Profile } from "@/types/api";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 

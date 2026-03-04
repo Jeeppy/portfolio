@@ -2,10 +2,14 @@ import { ApiError, apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
 import { cookies } from "next/headers";
 import ProjectsTable from "@/components/admin/projects/ProjectsTable";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { redirect } from "next/navigation";
 
-export default async function AdminProjectsPage() {
+export default async function AdminProjectsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   let projects: Project[] | undefined = undefined;
@@ -15,7 +19,8 @@ export default async function AdminProjectsPage() {
     });
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
-      return redirect("/admin/login");
+      const { locale } = await params;
+      return redirect(`/${locale}/admin/login`);
     } else {
       throw error;
     }

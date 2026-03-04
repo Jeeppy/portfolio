@@ -2,15 +2,18 @@
 
 import { apiFetch } from "@/lib/api";
 import { ContactMessage } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 export default function ContactForm() {
+  const t = useTranslations("contact");
+
   return (
     <form action={handleSubmit}>
       <input name="name"></input>
       <input name="email"></input>
       <input name="subject"></input>
       <textarea name="message"></textarea>
-      <button type="submit">Envoyer</button>
+      <button type="submit">{t("submit")}</button>
     </form>
   );
 }
