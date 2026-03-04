@@ -24,7 +24,7 @@ def get_skill(
     id: int,
     session: Session = Depends(get_session),
 ) -> Skill:
-    """Returns a skill by it id.
+    """Returns a skill by its id.
 
-    Return 404 if  the skill does not exists."""
+    Return 404 if  the skill does not exist."""
     return get_skill_or_404(id, session)

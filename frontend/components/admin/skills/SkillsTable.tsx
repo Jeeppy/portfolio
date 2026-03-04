@@ -43,7 +43,7 @@ export default function SkillsTable({
             <th>#</th>
             <th>Libellé</th>
             <th>Catégorie</th>
-            <th>Level</th>
+            <th>Niveau</th>
           </tr>
         </thead>
         <tbody>
