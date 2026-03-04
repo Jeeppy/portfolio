@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "@/components/admin/LogoutButton";
 
 export default function AdminPage() {
   return (
