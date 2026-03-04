@@ -39,18 +39,20 @@ export default function ProjectsTable({
       {error && <p>{error}</p>}
       <table>
         <thead>
-          <th>#</th>
-          <th>Titre</th>
-          <th>Statut</th>
-          <th></th>
-          <th></th>
+          <tr>
+            <th>#</th>
+            <th>Titre</th>
+            <th>Statut</th>
+            <th></th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           {projects.map((project) => (
             <tr key={project.slug}>
               <td>{project.slug}</td>
               <td>{project.title}</td>
-              <td>{project.published}</td>
+              <td>{project.published ? "Publié" : "Brouillon"}</td>
               <td>
                 <Link href={`/admin/projects/${project.slug}/edit`}>
                   <button>Editer</button>
