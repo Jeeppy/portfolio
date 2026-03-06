@@ -18,17 +18,15 @@ export default function LocaleSwitcher({
   }
 
   return (
-    <div className="self-start">
-      <button
-        onClick={() => switchLocale(locale === "fr" ? "en" : "fr")}
-        className={
-          mobile
-            ? "text-sm font-bold text-gray-900 hover:text-blue-600"
-            : "transition-color cursor-pointer px-3 py-1 text-xs font-semibold text-gray-600 hover:text-blue-600"
-        }
-      >
-        {mobile ? t("switchLangMobile") : t("switchLang")}
-      </button>
-    </div>
+    <button
+      onClick={() => switchLocale(locale === "fr" ? "en" : "fr")}
+      className={
+        mobile
+          ? "self-start text-sm font-bold text-gray-900 hover:text-blue-600"
+          : "cursor-pointer px-3 py-1 text-xs font-semibold text-gray-600 transition-colors hover:text-blue-600"
+      }
+    >
+      {mobile ? t("switchLangMobile") : t("switchLang")}
+    </button>
   );
 }
