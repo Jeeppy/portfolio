@@ -29,17 +29,56 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-linear-to-b from-blue-50 to-white antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <nav>
-            <Link href="/">{t("home")}</Link>
-            <Link href="/projects">{t("projects")}</Link>
-            <Link href="/skills">{t("skills")}</Link>
-            <Link href="/experiences">{t("experiences")}</Link>
-            <Link href="/contact">{t("contact")}</Link>
+          <nav className="fixed top-0 right-0 left-0 z-50 bg-white/95 shadow-md backdrop-blur-sm">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-10">
+              <Link
+                href="/"
+                className="flex items-center gap-1 text-base font-semibold text-gray-900"
+              >
+                <span className="text-blue-600">&lt;</span>
+                {t("logo")}
+                <span className="text-blue-600">/&gt;</span>
+              </Link>
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/"
+                  className="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600"
+                >
+                  {t("home")}
+                </Link>
+                <Link
+                  href="/projects"
+                  className="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600"
+                >
+                  {t("projects")}
+                </Link>
+                <Link
+                  href="/skills"
+                  className="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600"
+                >
+                  {t("skills")}
+                </Link>
+                <Link
+                  href="/experiences"
+                  className="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600"
+                >
+                  {t("experiences")}
+                </Link>
+                <Link
+                  href="/contact"
+                  className="text-sm font-bold text-gray-900 transition-colors hover:text-blue-600"
+                >
+                  {t("contact")}
+                </Link>
+                <LocaleSwitcher />
+              </div>
+            </div>
           </nav>
-          <LocaleSwitcher />
+          <div className="h-16" />
+
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
       </body>

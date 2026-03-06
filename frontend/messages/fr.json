@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Accueil",
+    "logo": "Mon portfolio",
     "projects": "Projets",
     "skills": "Compétences",
     "experiences": "Expériences",
@@ -16,11 +17,22 @@
     "present": "aujourd'hui"
   },
   "contact": {
-    "title": "Contact",
-    "submit": "Envoyer"
+    "title": "Contactez-moi",
+    "submit": "Envoyer",
+    "name": "Nom",
+    "email": "Email",
+    "subject": "Objet",
+    "message": "Message",
+    "messagePlaceholder": "Décrivez votre demande..."
   },
   "project": {
     "repository": "Dépôt",
-    "demo": "Démo"
+    "demo": "Démo",
+    "title": "Mes projets",
+    "subtitle": "Une sélection de mes réalisations"
+  },
+  "home": {
+    "contact-me": "Me contacter",
+    "see-my-projects": "Voir mes projets"
   }
 }

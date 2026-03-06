@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "logo": "My Portfolio",
     "projects": "Projects",
     "skills": "Skills",
     "experiences": "Experiences",
@@ -17,10 +18,21 @@
   },
   "contact": {
     "title": "Contact",
-    "submit": "Send"
+    "submit": "Send",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "messagePlaceholder": "Describe your request..."
   },
   "project": {
     "repository": "Repository",
-    "demo": "Demo"
+    "demo": "Demo",
+    "title": "My projects",
+    "subtitle": "A selection of my work"
+  },
+  "home": {
+    "contact-me": "Contact me",
+    "see-my-projects": "See my projects"
   }
 }

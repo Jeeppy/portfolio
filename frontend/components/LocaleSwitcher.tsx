@@ -14,11 +14,11 @@ export default function LocaleSwitcher() {
 
   return (
     <div>
-      <button onClick={() => switchLocale("fr")} disabled={locale === "fr"}>
-        FR
-      </button>
-      <button onClick={() => switchLocale("en")} disabled={locale === "en"}>
-        EN
+      <button
+        onClick={() => switchLocale(locale === "fr" ? "en" : "fr")}
+        className="transition-color cursor-pointer px-3 py-1 text-xs font-semibold text-gray-600 hover:text-blue-600"
+      >
+        {locale === "fr" ? "🇬🇧" : "🇫🇷"}
       </button>
     </div>
   );
