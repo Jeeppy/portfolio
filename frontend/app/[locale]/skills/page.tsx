@@ -29,7 +29,7 @@ export default async function SkillsPage() {
         {Object.entries(groupedSkills).map(([category, categorySkills]) => (
           <div
             key={category}
-            className="flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-md"
+            className="flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-xl"
           >
             <div className="flex flex-1 flex-col p-5">
               <h2 className="mb-4 text-center text-base font-semibold text-gray-900 transition-colors">

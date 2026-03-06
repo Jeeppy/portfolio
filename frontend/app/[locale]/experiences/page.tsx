@@ -20,9 +20,9 @@ export default async function ExperiencesPage({
       </h1>
       <div className="flex flex-col gap-6">
         {experiences.map((experience) => (
-          <section
+          <div
             key={experience.id}
-            className="rounded-xl bg-white p-6 shadow-md"
+            className="rounded-xl bg-white p-6 shadow-md hover:shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -60,7 +60,7 @@ export default async function ExperiencesPage({
                 {experience.description}
               </p>
             )}
-          </section>
+          </div>
         ))}
       </div>
     </main>

@@ -4,13 +4,14 @@ import { apiFetch } from "@/lib/api";
 import { ContactMessage } from "@/types/api";
 import { Send } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SyntheticEvent } from "react";
 
 export default function ContactForm() {
   const t = useTranslations("contact");
 
   return (
     <div className="rounded-xl bg-white p-8 shadow-md">
-      <form action={handleSubmit} className="mx-auto max-w-xl">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-xl">
         <div className="mb-3 flex flex-col gap-1">
           <label
             htmlFor="name"
@@ -32,6 +33,7 @@ export default function ContactForm() {
             {t("email")}
           </label>
           <input
+            id="email"
             name="email"
             className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
           ></input>
@@ -44,6 +46,7 @@ export default function ContactForm() {
             {t("subject")}
           </label>
           <input
+            id="subject"
             name="subject"
             className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
           ></input>
@@ -56,6 +59,7 @@ export default function ContactForm() {
             {t("message")}
           </label>
           <textarea
+            id="message"
             name="message"
             rows={5}
             placeholder={t("messagePlaceholder")}
@@ -76,7 +80,9 @@ export default function ContactForm() {
   );
 }
 
-async function handleSubmit(formData: FormData) {
+async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const subject = formData.get("subject") as string;

@@ -16,7 +16,7 @@ export default function LocaleSwitcher() {
     <div>
       <button
         onClick={() => switchLocale(locale === "fr" ? "en" : "fr")}
-        className="hover-text-blue-600 cursor-pointer px-3 py-1 text-xs font-semibold text-gray-600 transition-colors hover:border-blue-600"
+        className="transition-color cursor-pointer px-3 py-1 text-xs font-semibold text-gray-600 hover:text-blue-600"
       >
         {locale === "fr" ? "🇬🇧" : "🇫🇷"}
       </button>

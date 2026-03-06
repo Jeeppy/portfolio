@@ -17,7 +17,7 @@
     "present": "present"
   },
   "contact": {
-    "title": "Contact-me",
+    "title": "Contact",
     "submit": "Send",
     "name": "Name",
     "email": "Email",
@@ -33,6 +33,6 @@
   },
   "home": {
     "contact-me": "Contact me",
-    "see-my-projects": "See my project"
+    "see-my-projects": "See my projects"
   }
 }

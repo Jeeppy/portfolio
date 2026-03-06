@@ -9,7 +9,13 @@ export const dynamic = "force-dynamic";
 export default async function ProjectsPage() {
   const projects = await apiFetch<Project[]>("/api/projects");
   const t = await getTranslations("project");
-
+  const colors = [
+    "bg-blue-100 text-blue-600",
+    "bg-green-100 text-green-600",
+    "bg-purple-100 text-purple-600",
+    "bg-yellow-100 text-yellow-600",
+    "bg-pink-100 text-pink-600",
+  ];
   return (
     <main className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="mb-10 text-center text-3xl font-bold text-gray-900">
@@ -20,7 +26,7 @@ export default async function ProjectsPage() {
         {projects.map((project) => (
           <div
             key={project.id}
-            className="flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-md"
+            className="flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-xl"
           >
             <div className="flex flex-1 flex-col p-5">
               <h2 className="mb-2 text-base font-semibold text-gray-900 transition-colors">
@@ -34,13 +40,6 @@ export default async function ProjectsPage() {
               {project.tags && project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag, i) => {
-                    const colors = [
-                      "bg-blue-100 text-blue-600",
-                      "bg-green-100 text-green-600",
-                      "bg-purple-100 text-purple-600",
-                      "bg-yellow-100 text-yellow-600",
-                      "bg-pink-100 text-pink-600",
-                    ];
                     return (
                       <span
                         key={tag.id}
