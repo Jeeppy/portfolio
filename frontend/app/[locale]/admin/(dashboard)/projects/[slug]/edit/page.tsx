@@ -23,5 +23,12 @@ export default async function EditProjectPage({
     }
     throw error;
   }
-  return <ProjectForm initialData={project} />;
+  return (
+    <div>
+      <h1 className="mb-6 text-2xl font-bold text-slate-800">
+        Modifier - {project.title}
+      </h1>
+      <ProjectForm initialData={project} />
+    </div>
+  );
 }

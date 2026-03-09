@@ -17,5 +17,12 @@ export default async function EditSkillPage({
     }
     throw error;
   }
-  return <SkillForm initialData={skill} />;
+  return (
+    <div>
+      <h1 className="mb-6 text-2xl font-bold text-slate-800">
+        Modifier - {skill.name}
+      </h1>
+      <SkillForm initialData={skill} />
+    </div>
+  );
 }

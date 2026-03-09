@@ -4,6 +4,7 @@ import { ApiError, apiFetch } from "@/lib/api";
 import { Skill } from "@/types/api";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function SkillsTable({
   skills,
@@ -35,35 +36,49 @@ export default function SkillsTable({
 
   return (
     <div>
-      {error && <p>{error}</p>}
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Libellé</th>
-            <th>Catégorie</th>
-            <th>Niveau</th>
-          </tr>
-        </thead>
-        <tbody>
-          {skills.map((skill) => (
-            <tr key={skill.id}>
-              <td>{skill.id}</td>
-              <td>{skill.name}</td>
-              <td>{skill.category}</td>
-              <td>{skill.level}</td>
-              <td>
-                <Link href={`/admin/skills/${skill.id}/edit`}>
-                  <button>Editer</button>
-                </Link>
-              </td>
-              <td>
-                <button onClick={() => handleDelete(skill)}>Supprimer</button>
-              </td>
+      {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+      <div className="overflow-x-auto rounded-lg border border-slate-200">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-slate-100 text-xs tracking-wider text-slate-500 uppercase">
+            <tr>
+              <th className="px-4 py-3 font-medium">#</th>
+              <th className="px-4 py-3 font-medium">Libellé</th>
+              <th className="px-4 py-3 font-medium">Catégorie</th>
+              <th className="px-4 py-3 font-medium">Niveau</th>
+              <th className="px-4 py-3 text-right font-medium"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {skills.map((skill) => (
+              <tr
+                key={skill.id}
+                className="border-t border-slate-200 hover:bg-slate-100"
+              >
+                <td className="px-4 py-3 text-slate-700">{skill.id}</td>
+                <td className="px-4 py-3 text-slate-700">{skill.name}</td>
+                <td className="px-4 py-3 text-slate-700">{skill.category}</td>
+                <td className="px-4 py-3 text-slate-700">{skill.level}</td>
+                <td className="px-4 py-3">
+                  <div className="flex justify-end gap-2">
+                    <Link
+                      href={`/admin/skills/${skill.id}/edit`}
+                      className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                    >
+                      <Pencil size={15} />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(skill)}
+                      className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
