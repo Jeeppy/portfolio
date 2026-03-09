@@ -5,6 +5,7 @@ import { getClientToken } from "@/lib/auth.client";
 import { Skill } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
+import { Save } from "lucide-react";
 
 export default function SkillForm({ initialData }: { initialData?: Skill }) {
   const router = useRouter();
@@ -41,28 +42,51 @@ export default function SkillForm({ initialData }: { initialData?: Skill }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <p>{error}</p>}
-      <label>Libellé</label>
-      <input
-        name="name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-      />
-      <label>Catégorie</label>
-      <input
-        name="category"
-        value={form.category}
-        onChange={(e) => setForm({ ...form, category: e.target.value })}
-      />
-      <label>Niveau</label>
-      <input
-        type="number"
-        name="level"
-        value={form.level}
-        onChange={(e) => setForm({ ...form, level: Number(e.target.value) })}
-      />
-      <button type="submit">Enregistrer</button>
+    <form onSubmit={handleSubmit} className="flex max-w-lg flex-col gap-5">
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      <div className="flex flex-col gap-1">
+        <label className="block text-sm/6 font-semibold text-gray-700">
+          Libellé
+        </label>
+        <input
+          name="name"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <label className="block text-sm/6 font-semibold text-gray-700">
+          Catégorie
+        </label>
+        <input
+          name="category"
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+          className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <label className="block text-sm/6 font-semibold text-gray-700">
+          Niveau
+        </label>
+        <input
+          type="number"
+          name="level"
+          value={form.level}
+          onChange={(e) => setForm({ ...form, level: Number(e.target.value) })}
+          className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
+        />
+      </div>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+        >
+          <Save size={16} />
+          Enregistrer
+        </button>
+      </div>
     </form>
   );
 }
