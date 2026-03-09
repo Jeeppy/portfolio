@@ -9,12 +9,13 @@ export default async function EditProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const token = await getToken();
   let project: Project | undefined = undefined;
   try {
     project = await apiFetch<Project>(
       `/api/admin/projects/${(await params).slug}`,
       {
-        headers: { Authorization: `Bearer ${await getToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       },
     );
   } catch (error) {
@@ -28,7 +29,7 @@ export default async function EditProjectPage({
       <h1 className="mb-6 text-2xl font-bold text-slate-800">
         Modifier - {project.title}
       </h1>
-      <ProjectForm initialData={project} />
+      <ProjectForm initialData={project} token={token} />
     </div>
   );
 }

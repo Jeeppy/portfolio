@@ -104,6 +104,15 @@ class ExperienceRead(BaseModel):
     end_date: date | None
 
 
+class ExperienceUpdate(BaseModel):
+    company: str | None = Field(default=None, min_length=1, max_length=200)
+    position: str | None = Field(default=None, min_length=1, max_length=200)
+    location: str | None = Field(default=None, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
+    start_date: date | None = None
+    end_date: date | None = None
+
+
 class EducationCreate(BaseModel):
     school: str = Field(min_length=1, max_length=200)
     degree: str = Field(min_length=1, max_length=200)

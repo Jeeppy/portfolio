@@ -1,7 +1,7 @@
-import SkillForm from "@/components/admin/skills/SkillForm";
+import ExperienceForm from "@/components/admin/experiences/ExperienceForm";
 import { ApiError, apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { Skill } from "@/types/api";
+import { Experience } from "@/types/api";
 import { notFound } from "next/navigation";
 
 export default async function EditSkillPage({
@@ -10,9 +10,11 @@ export default async function EditSkillPage({
   params: Promise<{ id: string }>;
 }) {
   const token = await getToken();
-  let skill: Skill | undefined = undefined;
+  let experience: Experience | undefined = undefined;
   try {
-    skill = await apiFetch<Skill>(`/api/skills/${(await params).id}`);
+    experience = await apiFetch<Experience>(
+      `/api/experiences/${(await params).id}`,
+    );
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return notFound();
@@ -22,9 +24,9 @@ export default async function EditSkillPage({
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold text-slate-800">
-        Modifier - {skill.name}
+        Modifier - {experience.company}
       </h1>
-      <SkillForm initialData={skill} token={token} />
+      <ExperienceForm initialData={experience} token={token} />
     </div>
   );
 }

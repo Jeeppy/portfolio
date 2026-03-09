@@ -53,7 +53,6 @@ export interface Experience {
   description: string | null;
   start_date: string;
   end_date: string | null;
-  is_current: boolean;
 }
 
 export interface Education {
