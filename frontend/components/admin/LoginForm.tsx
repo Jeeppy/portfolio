@@ -40,7 +40,7 @@ export default function LoginForm() {
       </div>
       <button
         type="submit"
-        className="mt-2 rounded-lg bg-blue-600 py-2 font-medium text-white transition-colors hover:bg-blue-500"
+        className="mt-2 rounded-lg bg-indigo-600 py-2 font-medium text-white transition-colors hover:bg-indigo-500"
       >
         Connexion
       </button>

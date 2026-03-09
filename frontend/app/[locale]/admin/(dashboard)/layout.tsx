@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import LogoutButton from "@/components/admin/LogoutButton";
 import { ReactNode } from "react";
 
@@ -11,7 +11,7 @@ export default function DashboardLayout({
         <p className="mb-2 text-xs font-semibold tracking-widest text-slate-400 uppercase">
           Admin
         </p>
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-1 flex-col gap-1">
           <Link
             href="/admin"
             className="rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
