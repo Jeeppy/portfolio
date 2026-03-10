@@ -148,6 +148,12 @@ class EducationUpdate(BaseModel):
     is_alternance: bool | None = None
     experience_id: int | None = None
 
+    @model_validator(mode="after")
+    def check_alternance_consistency(self) -> "EducationUpdate":
+        if self.experience_id is not None and self.is_alternance is False:
+            raise ValueError("experience_id requires is_alternance=True")
+        return self
+
 
 class SocialLinkCreate(BaseModel):
     platform: str = Field(min_length=1, max_length=100)
