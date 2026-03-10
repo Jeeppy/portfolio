@@ -59,10 +59,10 @@ export interface Education {
   id: number;
   school: string;
   degree: string;
-  field: string | null;
-  start_date: string;
-  end_date: string | null;
+  year: number;
+  location: string | null;
   is_alternance: boolean;
+  experience_id: number | null;
 }
 
 export interface ContactMessage {

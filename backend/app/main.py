@@ -17,6 +17,7 @@ from app.routers import (
     appointments,
     auth,
     contact,
+    education,
     experiences,
     profile,
     projects,
@@ -26,6 +27,7 @@ from app.routers.admin import appointments as admin_appointments
 from app.routers.admin import availability as admin_availability
 from app.routers.admin import categories as admin_categories
 from app.routers.admin import contact as admin_contact
+from app.routers.admin import education as admin_education
 from app.routers.admin import experiences as admin_experiences
 from app.routers.admin import profile as admin_profile
 from app.routers.admin import projects as admin_projects
@@ -37,6 +39,7 @@ ROUTERS = [
     appointments,
     auth,
     contact,
+    education,
     experiences,
     profile,
     projects,
@@ -45,6 +48,7 @@ ROUTERS = [
     admin_availability,
     admin_categories,
     admin_contact,
+    admin_education,
     admin_experiences,
     admin_profile,
     admin_projects,

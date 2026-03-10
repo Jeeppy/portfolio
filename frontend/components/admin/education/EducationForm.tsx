@@ -1,26 +1,25 @@
 "use client";
 
-import { Experience } from "@/types/api";
+import { Education } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { SyntheticEvent, useState } from "react";
 import { Save } from "lucide-react";
 import { ApiError, apiFetch } from "@/lib/api";
 
-export default function ExperienceForm({
+export default function EducationForm({
   initialData,
   token,
 }: {
-  initialData?: Experience;
+  initialData?: Education;
   token?: string;
 }) {
   const router = useRouter();
   const [form, setForm] = useState({
-    company: initialData?.company ?? "",
-    position: initialData?.position ?? "",
+    school: initialData?.school ?? "",
+    degree: initialData?.degree ?? "",
     location: initialData?.location ?? "",
-    start_date: initialData?.start_date ?? "",
-    end_date: initialData?.end_date ?? "",
-    description: initialData?.description ?? "",
+    year: initialData?.year ?? new Date().getFullYear(),
+    is_alternance: initialData?.is_alternance ?? false,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +27,7 @@ export default function ExperienceForm({
     e.preventDefault();
 
     const method = initialData ? "PUT" : "POST";
-    let url = "/api/admin/experiences";
+    let url = "/api/admin/education";
     if (initialData) {
       url += `/${initialData.id}`;
     }
@@ -40,13 +39,10 @@ export default function ExperienceForm({
         },
         body: JSON.stringify({
           ...form,
-          start_date: form.start_date || null,
-          end_date: form.end_date || null,
           location: form.location || null,
-          description: form.description || null,
         }),
       });
-      router.push("/admin/experiences");
+      router.push("/admin/education");
     } catch (error) {
       if (error instanceof ApiError) {
         setError("Une erreur est survenue.");
@@ -61,23 +57,23 @@ export default function ExperienceForm({
       {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="flex flex-col gap-1">
         <label className="block text-sm/6 font-semibold text-gray-700">
-          Entreprise
+          École
         </label>
         <input
-          name="company"
-          value={form.company}
-          onChange={(e) => setForm({ ...form, company: e.target.value })}
+          name="school"
+          value={form.school}
+          onChange={(e) => setForm({ ...form, school: e.target.value })}
           className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
         />
       </div>
       <div className="flex flex-col gap-1">
         <label className="block text-sm/6 font-semibold text-gray-700">
-          Poste
+          Diplôme
         </label>
         <input
-          name="position"
-          value={form.position}
-          onChange={(e) => setForm({ ...form, position: e.target.value })}
+          name="degree"
+          value={form.degree}
+          onChange={(e) => setForm({ ...form, degree: e.target.value })}
           className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
         />
       </div>
@@ -92,42 +88,31 @@ export default function ExperienceForm({
           className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
         />
       </div>
-      <div className="flex gap-4">
-        <div className="flex flex-1 flex-col gap-1">
-          <label className="block text-sm/6 font-semibold text-gray-700">
-            Début
-          </label>
-          <input
-            name="start_date"
-            type="date"
-            value={form.start_date}
-            onChange={(e) => setForm({ ...form, start_date: e.target.value })}
-            className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-1">
-          <label className="block text-sm/6 font-semibold text-gray-700">
-            Fin
-          </label>
-          <input
-            name="end_date"
-            type="date"
-            value={form.end_date}
-            onChange={(e) => setForm({ ...form, end_date: e.target.value })}
-            className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
-          />
-        </div>
-      </div>
       <div className="flex flex-col gap-1">
         <label className="block text-sm/6 font-semibold text-gray-700">
-          Description
+          Année
         </label>
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="block h-32 w-full resize-none rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
+        <input
+          name="year"
+          type="number"
+          value={form.year}
+          onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
+          className="block w-full rounded-md border border-gray-400 px-3.5 py-1.5 text-base text-gray-900 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50"
         />
+      </div>
+      <div className="flex flex-col gap-1">
+        <label className="flex cursor-pointer items-center gap-2 text-sm/6 font-semibold text-gray-700">
+          <input
+            name="is_alternance"
+            type="checkbox"
+            checked={form.is_alternance}
+            onChange={(e) =>
+              setForm({ ...form, is_alternance: e.target.checked })
+            }
+            className="h-4 w-4 rounded border-gray-400 accent-indigo-600"
+          />
+          En alternance
+        </label>
       </div>
       <div className="flex justify-end">
         <button
