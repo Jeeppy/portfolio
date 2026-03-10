@@ -6,7 +6,7 @@ from sqlmodel import Session
 
 from app.models import Experience, Profile
 
-EXPERIENCE_URL = "api/experiences"
+EXPERIENCE_URL = "/api/experiences"
 
 
 @pytest.fixture

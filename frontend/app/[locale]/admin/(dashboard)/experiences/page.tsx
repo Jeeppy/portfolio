@@ -6,11 +6,15 @@ import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 
 export default async function ExperiencesPage() {
-  const experiences = await apiFetch<Experience[]>("/api/experiences");
+  const [experiences, token] = await Promise.all([
+    apiFetch<Experience[]>("/api/experiences"),
+    getToken(),
+  ]);
+
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold text-slate-800">Expériences</h1>
-      <ExperiencesTable experiences={experiences} token={await getToken()} />
+      <ExperiencesTable experiences={experiences} token={token} />
       <div className="mt-4 flex justify-end">
         <Link
           href="/admin/experiences/new"

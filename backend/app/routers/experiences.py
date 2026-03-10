@@ -26,5 +26,5 @@ def get_experience(
 ) -> Experience:
     """Returns an experience by its id.
 
-    Return 404 if  the experience does not exist."""
+    Return 404 if the experience does not exist."""
     return get_experience_or_404(id, session)

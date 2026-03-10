@@ -38,7 +38,13 @@ export default function ExperienceForm({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          start_date: form.start_date || null,
+          end_date: form.end_date || null,
+          location: form.location || null,
+          description: form.description || null,
+        }),
       });
       router.push("/admin/experiences");
     } catch (error) {
