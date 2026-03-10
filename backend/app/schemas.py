@@ -140,6 +140,21 @@ class EducationRead(BaseModel):
     experience: ExperienceRead | None
 
 
+class EducationUpdate(BaseModel):
+    school: str | None = Field(default=None, min_length=1, max_length=200)
+    degree: str | None = Field(default=None, min_length=1, max_length=200)
+    location: str | None = None
+    year: int | None = None
+    is_alternance: bool | None = None
+    experience_id: int | None = None
+
+    @model_validator(mode="after")
+    def check_alternance_consistency(self) -> "EducationUpdate":
+        if self.experience_id is not None and self.is_alternance is False:
+            raise ValueError("experience_id requires is_alternance=True")
+        return self
+
+
 class SocialLinkCreate(BaseModel):
     platform: str = Field(min_length=1, max_length=100)
     url: str = Field(min_length=1, max_length=500)

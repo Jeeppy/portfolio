@@ -1,7 +1,13 @@
 import { Link } from "@/i18n/navigation";
 import LogoutButton from "@/components/admin/LogoutButton";
 import { ReactNode } from "react";
-import { Briefcase, FolderKanban, LayoutDashboard, Wrench } from "lucide-react";
+import {
+  Briefcase,
+  FolderKanban,
+  GraduationCap,
+  LayoutDashboard,
+  Wrench,
+} from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -39,7 +45,14 @@ export default function DashboardLayout({
             className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
           >
             <Briefcase size={16} />
-            Experiences
+            Expériences
+          </Link>
+          <Link
+            href="/admin/education"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+          >
+            <GraduationCap size={16} />
+            Formations
           </Link>
           <LogoutButton />
         </nav>
