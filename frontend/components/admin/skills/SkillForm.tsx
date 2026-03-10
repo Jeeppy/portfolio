@@ -1,13 +1,18 @@
 "use client";
 
 import { ApiError, apiFetch } from "@/lib/api";
-import { getClientToken } from "@/lib/auth.client";
 import { Skill } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { Save } from "lucide-react";
 
-export default function SkillForm({ initialData }: { initialData?: Skill }) {
+export default function SkillForm({
+  initialData,
+  token,
+}: {
+  initialData?: Skill;
+  token?: string;
+}) {
   const router = useRouter();
   const [form, setForm] = useState({
     name: initialData?.name ?? "",
@@ -28,7 +33,7 @@ export default function SkillForm({ initialData }: { initialData?: Skill }) {
       await apiFetch(url, {
         method: method,
         headers: {
-          Authorization: `Bearer ${getClientToken()}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       });

@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import LogoutButton from "@/components/admin/LogoutButton";
 import { ReactNode } from "react";
+import { Briefcase, FolderKanban, LayoutDashboard, Wrench } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -14,24 +15,34 @@ export default function DashboardLayout({
         <nav className="flex flex-1 flex-col gap-1">
           <Link
             href="/admin"
-            className="rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
           >
+            <LayoutDashboard size={16} />
             Dashboard
           </Link>
           <Link
             href="/admin/projects"
-            className="rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
           >
+            <FolderKanban size={16} />
             Projets
           </Link>
           <Link
             href="/admin/skills"
-            className="rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
           >
+            <Wrench size={16} />
             Compétences
           </Link>
+          <Link
+            href="/admin/experiences"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+          >
+            <Briefcase size={16} />
+            Experiences
+          </Link>
+          <LogoutButton />
         </nav>
-        <LogoutButton />
       </aside>
       <main className="flex-1 p-8">{children}</main>
     </div>

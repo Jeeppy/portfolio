@@ -12,11 +12,12 @@ export default async function AdminSkillsPage() {
       <h1 className="mb-6 text-2xl font-bold text-slate-800">Compétences</h1>
       <SkillsTable skills={skills} token={await getToken()} />
       <div className="mt-4 flex justify-end">
-        <Link href="/admin/skills/new">
-          <button className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500">
-            <Plus size={16} />
-            Nouvelle compétence
-          </button>
+        <Link
+          href="/admin/skills/new"
+          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
+        >
+          <Plus size={16} />
+          Nouvelle compétence
         </Link>
       </div>
     </div>

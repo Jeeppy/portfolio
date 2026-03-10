@@ -17,7 +17,7 @@ export default function SkillsTable({
   const [error, setError] = useState<string | null>(null);
 
   async function handleDelete(skill: Skill) {
-    if (!window.confirm(`Supprimer "${skill.name}"`)) return;
+    if (!window.confirm(`Supprimer "${skill.name}" ?`)) return;
 
     try {
       await apiFetch(`/api/admin/skills/${skill.id}`, {
