@@ -81,7 +81,7 @@ def test_update_education_without_auth(
     assert response.status_code == 401
 
 
-def test_delete_experience(
+def test_delete_education(
     admin_client: TestClient, education: Education, session: Session
 ) -> None:
     response = admin_client.delete(f"{ADMIN_EDUCATION_URL}/{education.id}")
@@ -89,12 +89,12 @@ def test_delete_experience(
     assert session.get(Education, education.id) is None
 
 
-def test_delete_experience_not_found(admin_client: TestClient) -> None:
+def test_delete_education_not_found(admin_client: TestClient) -> None:
     response = admin_client.delete(f"{ADMIN_EDUCATION_URL}/55")
     assert response.status_code == 404
 
 
-def test_delete_experience_without_auth(
+def test_delete_education_without_auth(
     client: TestClient, education: Education
 ) -> None:
     response = client.delete(f"{ADMIN_EDUCATION_URL}/{education.id}")

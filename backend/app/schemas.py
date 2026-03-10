@@ -142,7 +142,7 @@ class EducationRead(BaseModel):
 
 class EducationUpdate(BaseModel):
     school: str | None = Field(default=None, min_length=1, max_length=200)
-    degree: str | None = Field(min_length=1, max_length=200)
+    degree: str | None = Field(default=None, min_length=1, max_length=200)
     location: str | None = None
     year: int | None = None
     is_alternance: bool | None = None
