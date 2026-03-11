@@ -6,6 +6,7 @@ import {
   FolderKanban,
   GraduationCap,
   LayoutDashboard,
+  MessageSquare,
   User,
   Wrench,
 } from "lucide-react";
@@ -61,6 +62,13 @@ export default function DashboardLayout({
           >
             <GraduationCap size={16} />
             Formations
+          </Link>
+          <Link
+            href="/admin/contact"
+            className="flex gap-2 rounded-lg px-3 py-2 text-sm hover:bg-slate-700"
+          >
+            <MessageSquare size={16} />
+            Messages
           </Link>
           <LogoutButton />
         </nav>
