@@ -72,6 +72,7 @@ export interface ContactMessage {
   subject: string;
   message: string;
   created_at: string;
+  read: boolean;
 }
 
 export interface Appointment {
@@ -79,7 +80,7 @@ export interface Appointment {
   name: string;
   email: string;
   message: string | null;
-  status: "pending" | "confirmed" | "cancelled";
+  status: "pending" | "confirmed" | "cancelled" | "declined";
   created_at: string;
 }
 
