@@ -87,6 +87,7 @@ export default function ProfileForm({
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
+    router.refresh();
   }
 
   async function handleResumeUpload() {
@@ -107,6 +108,7 @@ export default function ProfileForm({
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
+    router.refresh();
   }
 
   return (
@@ -244,15 +246,16 @@ export default function ProfileForm({
           </button>
         </div>
         {initialData.avatar_filename && !avatarFile && (
-          <p className="text-xs text-gray-400">
+          <div className="text-xs text-gray-400">
             Actuel: {initialData.avatar_filename}
             <button
+              type="button"
               className="cursor-pointer px-2 text-red-500 hover:text-red-700"
               onClick={() => handleAvatarDelete()}
             >
               <Trash2 size={14} />
             </button>
-          </p>
+          </div>
         )}
       </div>
       <div className="flex flex-col gap-1">
@@ -261,7 +264,7 @@ export default function ProfileForm({
           <input
             ref={resumeInputRef}
             type="file"
-            accept="pdf/*"
+            accept="application/pdf"
             onChange={(e) => setResumeFile(e.target.files?.[0] ?? null)}
             className="hidden"
           />
@@ -283,15 +286,16 @@ export default function ProfileForm({
           </button>
         </div>
         {initialData.resume_filename && !resumeFile && (
-          <p className="text-xs text-gray-400">
+          <div className="text-xs text-gray-400">
             Actuel: {initialData.resume_filename}
             <button
+              type="button"
               className="cursor-pointer px-2 text-red-500 hover:text-red-700"
               onClick={() => handleResumeDelete()}
             >
               <Trash2 size={14} />
             </button>
-          </p>
+          </div>
         )}
       </div>
       <div className="flex justify-end">
