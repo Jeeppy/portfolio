@@ -23,7 +23,7 @@ export default function ContactTable({
         headers: { Authorization: `Bearer ${token}` },
       },
     );
-    setList(list.map((m) => (m.id === id ? updated : m)));
+    setList((prev) => prev.map((m) => (m.id === id ? updated : m)));
   }
 
   async function deleteMessage(id: number) {
@@ -31,7 +31,7 @@ export default function ContactTable({
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
-    setList(list.filter((m) => m.id !== id));
+    setList((prev) => prev.filter((m) => m.id !== id));
   }
 
   return (
@@ -43,7 +43,6 @@ export default function ContactTable({
             <th className="px-4 py-3 font-medium">Expediteur</th>
             <th className="px-4 py-3 font-medium">Sujet</th>
             <th className="px-4 py-3 font-medium">Lu</th>
-            <th className="px-4 py-3 font-medium"></th>
             <th className="px-4 py-3 font-medium"></th>
           </tr>
         </thead>
@@ -65,7 +64,7 @@ export default function ContactTable({
                 <td className="px-4 py-3 text-slate-700">{message.subject}</td>
                 <td className="px-4 py-3 text-slate-700">
                   <span
-                    className={`rounded-lg px-2 py-0.5 text-xs font-medium ${message.read ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${message.read ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}
                   >
                     {message.read ? "Lu" : "Non Lu"}
                   </span>
@@ -74,7 +73,10 @@ export default function ContactTable({
                   <button
                     type="button"
                     disabled={message.read}
-                    onClick={() => markAsRead(message.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      markAsRead(message.id);
+                    }}
                     className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600 disabled:cursor-default disabled:opacity-30"
                   >
                     <MailOpen size={16} />
@@ -82,7 +84,10 @@ export default function ContactTable({
                   <button
                     type="button"
                     className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                    onClick={() => deleteMessage(message.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteMessage(message.id);
+                    }}
                   >
                     <Trash2 size={16} />
                   </button>
