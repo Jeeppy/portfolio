@@ -26,10 +26,7 @@ export default async function AdminPage() {
     ]);
   const unread = messages
     .filter((m) => !m.read)
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
 
   return (
     <div>
@@ -63,7 +60,7 @@ export default async function AdminPage() {
           </div>
           <div className="px-4 py-4 text-gray-700">
             <h3 className="text-xs font-medium tracking-widest text-gray-500 uppercase">
-              Experiences
+              Expériences
             </h3>
             <p className="text-3xl font-bold">{experiences.length}</p>
           </div>
@@ -87,33 +84,34 @@ export default async function AdminPage() {
             {unread.length}
           </span>
         </h2>
-        <div className="rounded-xl border bg-white shadow-sm"></div>
-        {unread.length === 0 ? (
-          <p className="p-6 text-sm text-slate-400">Aucun message non lu.</p>
-        ) : (
-          <ul className="divide-y divide-slate-100">
-            {unread.map((message) => (
-              <li key={message.id}>
-                <Link
-                  href="/admin/contact"
-                  className="flex items-center justify-between px-6 py-4"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">
-                      {message.subject}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {message.name} · {message.email}
-                    </p>
-                  </div>
-                  <span className="text-xs text-slate-400">
-                    {new Date(message.created_at).toLocaleDateString("fr-FR")}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="rounded-xl bg-white shadow-md">
+          {unread.length === 0 ? (
+            <p className="p-6 text-sm text-slate-400">Aucun message non lu.</p>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {unread.map((message) => (
+                <li key={message.id}>
+                  <Link
+                    href="/admin/contact"
+                    className="flex items-center justify-between px-6 py-4"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">
+                        {message.subject}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {message.name} · {message.email}
+                      </p>
+                    </div>
+                    <span className="text-xs text-slate-400">
+                      {new Date(message.created_at).toLocaleDateString("fr-FR")}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
