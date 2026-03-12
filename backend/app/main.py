@@ -13,15 +13,47 @@ import app.uploads as file_uploads
 from app.config import get_settings
 from app.limiter import limiter
 from app.logging import setup_logging
-from app.routers import appointments, auth, contact, profile, projects
+from app.routers import (
+    appointments,
+    auth,
+    contact,
+    education,
+    experiences,
+    profile,
+    projects,
+    skills,
+)
 from app.routers.admin import appointments as admin_appointments
 from app.routers.admin import availability as admin_availability
 from app.routers.admin import categories as admin_categories
 from app.routers.admin import contact as admin_contact
+from app.routers.admin import education as admin_education
+from app.routers.admin import experiences as admin_experiences
 from app.routers.admin import profile as admin_profile
 from app.routers.admin import projects as admin_projects
+from app.routers.admin import skills as admin_skills
 
 settings = get_settings()
+
+ROUTERS = [
+    appointments,
+    auth,
+    contact,
+    education,
+    experiences,
+    profile,
+    projects,
+    skills,
+    admin_appointments,
+    admin_availability,
+    admin_categories,
+    admin_contact,
+    admin_education,
+    admin_experiences,
+    admin_profile,
+    admin_projects,
+    admin_skills,
+]
 
 
 @asynccontextmanager
@@ -51,17 +83,8 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
-app.include_router(projects.router, prefix=settings.api_prefix)
-app.include_router(auth.router, prefix=settings.api_prefix)
-app.include_router(profile.router, prefix=settings.api_prefix)
-app.include_router(contact.router, prefix=settings.api_prefix)
-app.include_router(appointments.router, prefix=settings.api_prefix)
-app.include_router(admin_categories.router, prefix=settings.api_prefix)
-app.include_router(admin_projects.router, prefix=settings.api_prefix)
-app.include_router(admin_profile.router, prefix=settings.api_prefix)
-app.include_router(admin_contact.router, prefix=settings.api_prefix)
-app.include_router(admin_appointments.router, prefix=settings.api_prefix)
-app.include_router(admin_availability.router, prefix=settings.api_prefix)
+for router in ROUTERS:
+    app.include_router(router.router, prefix=settings.api_prefix)
 
 
 @app.exception_handler(Exception)

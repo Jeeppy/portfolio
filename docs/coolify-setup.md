@@ -184,31 +184,93 @@ cloudflared tunnel route dns <tunnel-name> portfolio-api-staging.domaine.fr
 sudo systemctl restart cloudflared
 ```
 
+## Application production dans Coolify
+
+### Configuration du service
+
+| Paramètre | Valeur |
+|-----------|--------|
+| Name | `portfolio-api` |
+| Docker Image | `ghcr.io/<user>/portfolio-api` |
+| Docker Image Tag | `latest` |
+| Ports Exposes | `8000` |
+| Domains | `http://portfolio-api.domaine.fr` |
+
+### Variables d'environnement
+
+| Variable | Description |
+|----------|-------------|
+| `SECRET_KEY` | Générer avec `openssl rand -hex 32` |
+| `ADMIN_EMAIL` | Email du compte admin |
+| `ADMIN_PASSWORD` | Mot de passe fort |
+| `ENVIRONMENT` | `production` |
+
+### Volumes persistants
+
+Créer les dossiers sur la VM **avant** le premier déploiement :
+
+```bash
+sudo mkdir -p /srv/portfolio/uploads/avatars /srv/portfolio/uploads/resumes /srv/portfolio/data
+sudo chown -R 9999:9999 /srv/portfolio/
+```
+
+> L'UID 9999 correspond à `appuser` dans le conteneur.
+> Sans ce chown, l'API crashe au démarrage avec `PermissionError`.
+
+Dans Coolify → **Persistent Storage** :
+
+| Source (VM) | Destination (conteneur) |
+|-------------|------------------------|
+| `/srv/portfolio/data` | `/app/data` |
+| `/srv/portfolio/uploads` | `/app/uploads` |
+
+### Tunnel Cloudflare pour la production
+
+Dans `/etc/cloudflared/config.yml` :
+
+```yaml
+  - hostname: portfolio-api.domaine.fr
+    service: http://<ip-vm>:80
+```
+
+```bash
+cloudflared tunnel route dns <tunnel-name> portfolio-api.domaine.fr
+sudo systemctl restart cloudflared
+```
+
 ## CI/CD — GitHub Actions
 
 ### Workflow CD (`.github/workflows/ci.yml`)
 
-Job `deploy-staging` déclenché sur push vers `develop` après succès des tests :
+Deux jobs déclenchés après succès des tests :
 
-- Build de l'image Docker depuis `./backend`
-- Push vers `ghcr.io/<user>/portfolio-api:develop`
-- Déclenchement du webhook Coolify
+| Job | Branche | Tag image | Webhook |
+|-----|---------|-----------|---------|
+| `deploy-staging` | `develop` | `develop` | staging |
+| `deploy-production` | `main` | `latest` + SHA | production |
 
 ### Secrets GitHub nécessaires
 
 | Secret | Description |
 |--------|-------------|
-| `COOLIFY_STAGING_WEBHOOK_URL` | URL webhook Coolify staging |
+| `COOLIFY_STAGING_WEBHOOK_URL` | `https://coolify.domaine.fr/api/v1/deploy?uuid=<uuid>&force=false` |
+| `COOLIFY_PROD_WEBHOOK_URL` | `https://coolify.domaine.fr/api/v1/deploy?uuid=<uuid>&force=false` |
 | `COOLIFY_TOKEN` | Token API Coolify (write + deploy + read) |
 
 > Le token `GITHUB_TOKEN` est automatique pour pousser sur ghcr.io.
+> Utiliser `https://coolify.domaine.fr` (pas l'IP) dans les webhooks.
 
 ### Rendre le package public
 
 Après le premier push : **github.com/<user> → Packages → portfolio-api → Package settings → Change visibility → Public**
 
+### Permissions GitHub Actions
+
+**Settings → Actions → General → Workflow permissions → Read and write permissions**
+
 ## Accès
 
 - **Interface Coolify** : `http://<ip-vm>:8000` (local) ou `https://coolify.domaine.fr` (via tunnel)
-- **API staging** : `https://portfolio-api-staging.domaine.fr/health`
+- **API staging** : `https://staging-portfolio-api.domaine.fr/health`
+- **API production** : `https://portfolio-api.domaine.fr/health`
 - **SSH** : `ssh <user>@<ip-vm>`

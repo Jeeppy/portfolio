@@ -68,7 +68,7 @@ def delete_appointment(
     appointment = _get_appointment_or_404(appointment_id, session)
     session.delete(appointment)
     session.commit()
-    logger.info("Appointment deleted", appointement_id=appointment.id)
+    logger.info("Appointment deleted", appointment_id=appointment.id)
 
 
 def _get_appointment_or_404(appointment_id: int, session: Session) -> Appointment:

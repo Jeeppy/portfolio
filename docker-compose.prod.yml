@@ -9,10 +9,20 @@ services:
       - api_data:/app/data
       - api_uploads:/app/uploads
     env_file:
-      - ./backend/.venv
+      - ./backend/.env
     command: >
       sh -c "alembic upgrade head &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    ports:
+      - "3000:3000"
     restart: unless-stopped
 volumes:
   api_data:

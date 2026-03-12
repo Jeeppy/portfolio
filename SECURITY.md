@@ -10,8 +10,8 @@
 
   This policy covers:
   - **Backend** — FastAPI API (authentication, data validation, dependencies)
-  - **Frontend** — Vue.js 3 SPA (when available)
-  - **Infrastructure** — Docker, Caddy, deployment configuration
+  - **Frontend** — Next.js (App Router, TypeScript)
+  - **Infrastructure** — Docker, Coolify, Cloudflare Tunnels
 
   ## Reporting a Vulnerability
 

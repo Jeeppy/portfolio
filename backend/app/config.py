@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     admin_password: str
 
     # CORS
-    cors_origins: list[str] = ["http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:3000"]
 
 
 @lru_cache

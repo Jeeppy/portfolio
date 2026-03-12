@@ -1,13 +1,13 @@
 # 🚀 Portfolio
 
-Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + GitHub Actions CI/CD
+Self-hosted developer portfolio — FastAPI REST API + Next.js 15 | Docker + GitHub Actions CI/CD
 
 ## Tech Stack
 
 | Layer        | Technology                                                                                                      |
 | ------------ | --------------------------------------------------------------------------------------------------------------- |
 | **Backend**  | [FastAPI](https://fastapi.tiangolo.com/) — Python 3.12                                                          |
-| **Frontend** | [Vue.js 3](https://vuejs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/)                           |
+| **Frontend** | [Next.js 15](https://nextjs.org/) — TypeScript + [TailwindCSS](https://tailwindcss.com/) + [TanStack Query](https://tanstack.com/query) |
 | **Database** | SQLite via [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic](https://alembic.sqlalchemy.org/) (migrations) |
 | **Auth**     | JWT (single-user)                                                                                               |
 | **Deploy**   | [Coolify](https://coolify.io/) (self-hosted PaaS) + Cloudflare Tunnels                                          |
@@ -28,7 +28,7 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 
 - [pyenv](https://github.com/pyenv/pyenv) — Python version management
 - [uv](https://docs.astral.sh/uv/) — Fast Python package manager
-- [Node.js](https://nodejs.org/) ≥ 18 — For the Vue.js frontend
+- [nvm](https://github.com/nvm-sh/nvm) — Node.js version management
 - [Docker](https://www.docker.com/) & Docker Compose — For containerized deployment
 
 ## Getting Started
@@ -38,9 +38,6 @@ Self-hosted developer portfolio — FastAPI REST API + Vue.js 3 SPA | Docker + G
 ```bash
 git clone git@github.com:YOUR_USER/portfolio.git
 cd portfolio
-
-cp .env.example .env
-# Edit .env with your settings
 ```
 
 ### 2. Backend setup
@@ -69,11 +66,15 @@ Interactive docs at http://localhost:8000/docs
 ```bash
 cd frontend
 
+# Configure environment
+cp .env.local.example .env.local
+# Edit .env.local : NEXT_PUBLIC_API_URL=http://localhost:8000
+
 npm install
 npm run dev
 ```
 
-App available at http://localhost:5173
+App available at http://localhost:3000
 
 ## Useful Commands
 
@@ -110,6 +111,21 @@ uv run pip-audit
 uv run pytest
 ```
 
+### Frontend
+
+```bash
+cd frontend
+
+# Dev server (hot reload)
+npm run dev
+
+# Production build
+npm run build
+
+# Lint
+npm run lint
+```
+
 ### Git hooks
 
 ```bash
@@ -122,18 +138,18 @@ pre-commit run --all-files
 
 ### Docker (dev)
 
-  ```bash
-  # Build et lancer l'API
-  docker compose up --build
+```bash
+# Build et lancer l'API
+docker compose up --build
 
-  # En arrière-plan
-  docker compose up -d
+# En arrière-plan
+docker compose up -d
 
-  # Logs
-  docker compose logs -f api
+# Logs
+docker compose logs -f api
 
-  # Arrêter
-  docker compose down
+# Arrêter
+docker compose down
 ```
 
 ## License

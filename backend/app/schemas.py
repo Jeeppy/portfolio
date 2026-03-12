@@ -1,4 +1,5 @@
 from datetime import date, datetime, time
+from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
@@ -71,6 +72,12 @@ class SkillCreate(BaseModel):
     level: int = Field(default=0, ge=0, le=10)
 
 
+class SkillUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    category: str | None = Field(default=None, max_length=100)
+    level: int | None = Field(default=None, ge=0, le=10)
+
+
 class SkillRead(BaseModel):
     id: int
     name: str
@@ -95,6 +102,15 @@ class ExperienceRead(BaseModel):
     description: str | None
     start_date: date
     end_date: date | None
+
+
+class ExperienceUpdate(BaseModel):
+    company: str | None = Field(default=None, min_length=1, max_length=200)
+    position: str | None = Field(default=None, min_length=1, max_length=200)
+    location: str | None = Field(default=None, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
+    start_date: date | None = None
+    end_date: date | None = None
 
 
 class EducationCreate(BaseModel):
@@ -122,6 +138,21 @@ class EducationRead(BaseModel):
     is_alternance: bool
     experience_id: int | None
     experience: ExperienceRead | None
+
+
+class EducationUpdate(BaseModel):
+    school: str | None = Field(default=None, min_length=1, max_length=200)
+    degree: str | None = Field(default=None, min_length=1, max_length=200)
+    location: str | None = None
+    year: int | None = None
+    is_alternance: bool | None = None
+    experience_id: int | None = None
+
+    @model_validator(mode="after")
+    def check_alternance_consistency(self) -> "EducationUpdate":
+        if self.experience_id is not None and self.is_alternance is False:
+            raise ValueError("experience_id requires is_alternance=True")
+        return self
 
 
 class SocialLinkCreate(BaseModel):
@@ -227,4 +258,4 @@ class AppointmentRead(BaseModel):
 
 
 class AppointmentStatusUpdate(BaseModel):
-    status: str
+    status: Literal["confirmed", "declined", "cancelled"]
