@@ -8,7 +8,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 FROM python:3.12-slim AS runtime
 
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN groupadd -r -g 9999 appuser && useradd -r -u 9999 -g appuser appuser
 
 WORKDIR /app
 
