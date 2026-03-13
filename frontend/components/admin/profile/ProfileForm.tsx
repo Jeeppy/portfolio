@@ -3,8 +3,9 @@
 import { Profile } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { SyntheticEvent, useRef, useState } from "react";
-import { Link, Plus, Save, Trash2, Upload } from "lucide-react";
+import { Plus, Save, Trash2, Upload } from "lucide-react";
 import { ApiError, apiFetch } from "@/lib/api";
+import PlatformIcon from "@/components/icons/PlatformIcon";
 
 export default function ProfileForm({
   initialData,
@@ -189,7 +190,11 @@ export default function ProfileForm({
             {socialLinks?.map((socialLink, index) => (
               <li key={index} className="flex items-center gap-2">
                 <div className="relative flex flex-1 items-center">
-                  <Link size={14} className="absolute left-2.5 text-gray-400" />
+                  <PlatformIcon
+                    platform={socialLink.platform}
+                    size={14}
+                    className="absolute left-2.5 text-gray-400"
+                  />
                   <input
                     placeholder="Liens"
                     value={socialLink.url}
