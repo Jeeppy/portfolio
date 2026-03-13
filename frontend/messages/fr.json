@@ -5,9 +5,7 @@
     "projects": "Projets",
     "skills": "Compétences",
     "experiences": "Expériences",
-    "contact": "Contact",
-    "switchLang": "🇬🇧",
-    "switchLangMobile": "English 🇬🇧"
+    "contact": "Contact"
   },
   "skills": {
     "title": "Compétences",
