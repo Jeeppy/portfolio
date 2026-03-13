@@ -1,27 +1,22 @@
 import ContactTable from "@/components/admin/contact/ContactTable";
-import { ApiError, apiFetch } from "@/lib/api";
+import { adminFetch } from "@/lib/admin";
+import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { ContactMessage } from "@/types/api";
-import { redirect } from "next/navigation";
 
 export default async function ContactPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const token = await getToken();
-  let messages: ContactMessage[] = [];
-  try {
-    messages = await apiFetch<ContactMessage[]>("/api/admin/contact", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
-      const { locale } = await params;
-      return redirect(`/${locale}/admin/login`);
-    }
-    throw error;
-  }
+  const [token, { locale }] = await Promise.all([getToken(), params]);
+  const messages = await adminFetch(
+    () =>
+      apiFetch<ContactMessage[]>("/api/admin/contact", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    locale,
+  );
 
   return (
     <div>

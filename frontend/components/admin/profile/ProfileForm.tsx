@@ -3,8 +3,9 @@
 import { Profile } from "@/types/api";
 import { useRouter } from "@/i18n/navigation";
 import { SyntheticEvent, useRef, useState } from "react";
-import { Link, Plus, Save, Trash2, Upload } from "lucide-react";
+import { Plus, Save, Trash2, Upload } from "lucide-react";
 import { ApiError, apiFetch } from "@/lib/api";
+import PlatformIcon from "@/components/icons/PlatformIcon";
 
 export default function ProfileForm({
   initialData,
@@ -70,16 +71,36 @@ export default function ProfileForm({
   }
 
   async function handleAvatarUpload() {
+    setError(null);
     if (!avatarFile) return;
+
+    if (avatarFile.size > 2 * 1024 * 1024) {
+      setError("L'avatar ne doit pas dépasser 2 Mo");
+      return;
+    }
+    if (!avatarFile.type.startsWith("image/")) {
+      setError("Format non supporté");
+      return;
+    }
+
     const fd = new FormData();
     fd.append("file", avatarFile);
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/profile/avatar`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: fd,
-    });
-    setAvatarFile(null);
-    router.refresh();
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/admin/profile/avatar`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      },
+    );
+
+    if (res.status === 413) setError("Fichier trop volumineux");
+    else if (res.status === 415) setError("Format non supporté");
+    else if (res.ok) {
+      setAvatarFile(null);
+      router.refresh();
+    } else setError("Erreur lors de l'upload");
   }
 
   async function handleAvatarDelete() {
@@ -91,16 +112,36 @@ export default function ProfileForm({
   }
 
   async function handleResumeUpload() {
+    setError(null);
     if (!resumeFile) return;
+
+    if (resumeFile.size > 5 * 1024 * 1024) {
+      setError("Le CV ne doit pas dépasser 5 Mo");
+      return;
+    }
+    if (!resumeFile.type.startsWith("application/pdf")) {
+      setError("Format non supporté");
+      return;
+    }
+
     const fd = new FormData();
     fd.append("file", resumeFile);
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/profile/resume`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: fd,
-    });
-    setResumeFile(null);
-    router.refresh();
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/admin/profile/resume`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      },
+    );
+
+    if (res.status === 413) setError("Fichier trop volumineux");
+    else if (res.status === 415) setError("Format non supporté");
+    else if (res.ok) {
+      setResumeFile(null);
+      router.refresh();
+    } else setError("Erreur lors de l'upload");
   }
 
   async function handleResumeDelete() {
@@ -113,7 +154,11 @@ export default function ProfileForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-lg flex-col gap-5">
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && (
+        <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <label className="block text-sm/6 font-semibold text-gray-700">
           Nom complet
@@ -189,7 +234,11 @@ export default function ProfileForm({
             {socialLinks?.map((socialLink, index) => (
               <li key={index} className="flex items-center gap-2">
                 <div className="relative flex flex-1 items-center">
-                  <Link size={14} className="absolute left-2.5 text-gray-400" />
+                  <PlatformIcon
+                    platform={socialLink.platform}
+                    size={14}
+                    className="absolute left-2.5 text-gray-400"
+                  />
                   <input
                     placeholder="Liens"
                     value={socialLink.url}

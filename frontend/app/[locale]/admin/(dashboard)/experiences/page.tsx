@@ -4,10 +4,16 @@ import { getToken } from "@/lib/auth";
 import { Experience } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
+import { adminFetch } from "@/lib/admin";
 
-export default async function ExperiencesPage() {
+export default async function ExperiencesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const [experiences, token] = await Promise.all([
-    apiFetch<Experience[]>("/api/experiences"),
+    adminFetch(() => apiFetch<Experience[]>("/api/experiences"), locale),
     getToken(),
   ]);
 

@@ -1,11 +1,15 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useState } from "react";
 
 export default function LoginForm() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(formData: FormData) {
+    setError(null);
+
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
@@ -17,11 +21,18 @@ export default function LoginForm() {
 
     if (response.status === 200) {
       router.push("/admin");
+    } else {
+      setError("Identifiants incorrects");
     }
   }
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-4">
+      {error && (
+        <p className="rounded-lg border border-red-500/50 bg-red-900/50 px-4 py-3 text-sm text-red-400">
+          {error}
+        </p>
+      )}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-bold text-slate-300">Email</label>
         <input

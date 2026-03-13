@@ -2,7 +2,8 @@ import { apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function ProjectsPage() {
                       target="_blank"
                       className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:border-blue-600 hover:text-blue-600"
                     >
-                      <Github size={14} />
+                      <SiGithub size={14} />
                     </Link>
                   )}
                   {project.demo_url && (

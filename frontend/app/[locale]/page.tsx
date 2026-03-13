@@ -2,17 +2,14 @@ import { apiFetch } from "@/lib/api";
 import { Profile } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
-import { Github, Linkedin, FolderOpen, Mail } from "lucide-react";
+import { FolderOpen, Mail } from "lucide-react";
+import PlatformIcon from "@/components/icons/PlatformIcon";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const t = await getTranslations("home");
   const profile = await apiFetch<Profile>("/api/profile");
-  const iconMap: Record<string, React.ReactNode> = {
-    github: <Github size={16} />,
-    linkedin: <Linkedin size={16} />,
-  };
   const socialLinks = profile.social_links.map((link) => (
     <li key={link.id}>
       <Link
@@ -21,9 +18,7 @@ export default async function Home() {
         title={link.platform}
         target="_blank"
       >
-        {iconMap[link.platform.toLowerCase()] ?? (
-          <span className="text-xs">{link.platform}</span>
-        )}
+        <PlatformIcon platform={link.platform} size={16} className="text-xs" />
       </Link>
     </li>
   ));
