@@ -1,3 +1,17 @@
+## [2026.3.1] - 2026-03-13
+
+  ### 🐛 Bug Fixes
+
+  - *(backend)* Set explicit UID/GID 9999 for appuser to fix volume permissions
+  in production
+  - *(backend)* Delete old file after successful upload, not before
+  - *(frontend)* Replace deprecated Lucide brand icons with simple-icons
+  - *(frontend)* Display error message on failed login
+  - *(frontend)* Replace flag emojis with SVG using country-flag-icons
+  - *(frontend)* Display upload errors in profile form with client-side
+  validation
+  - *(frontend)* Redirect to login on 401 in admin pages via adminFetch helper
+
 ## [2026.3.0] - 2026-03-12
 
 ### 🚀 Features
