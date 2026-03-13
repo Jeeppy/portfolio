@@ -4,10 +4,16 @@ import { Education } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import EducationTable from "@/components/admin/education/EducationTable";
+import { adminFetch } from "@/lib/admin";
 
-export default async function EducationPage() {
+export default async function EducationPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const [educations, token] = await Promise.all([
-    apiFetch<Education[]>("/api/education"),
+    adminFetch(() => apiFetch<Education[]>("/api/education"), locale),
     getToken(),
   ]);
 

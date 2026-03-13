@@ -1,4 +1,5 @@
 import ProjectForm from "@/components/admin/projects/ProjectForm";
+import { adminFetch } from "@/lib/admin";
 import { apiFetch, ApiError } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Project } from "@/types/api";
@@ -7,16 +8,17 @@ import { notFound } from "next/navigation";
 export default async function EditProjectPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const token = await getToken();
+  const [token, { locale, slug }] = await Promise.all([getToken(), params]);
   let project: Project | undefined = undefined;
   try {
-    project = await apiFetch<Project>(
-      `/api/admin/projects/${(await params).slug}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
+    project = await adminFetch(
+      () =>
+        apiFetch<Project>(`/api/admin/projects/${slug}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      locale,
     );
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
