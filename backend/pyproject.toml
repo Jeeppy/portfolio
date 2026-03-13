@@ -1,6 +1,6 @@
 [project]
 name = "portfolio-api"
-version = "0.1.0"
+version = "2026.3.1"
 description = "REST API for self-hosted developer portfolio — FastAPI + SQLModel"
 requires-python = ">=3.12.8"
 dependencies = [
