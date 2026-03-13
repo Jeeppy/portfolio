@@ -1,30 +1,24 @@
-import { ApiError, apiFetch } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 import { Project } from "@/types/api";
 import ProjectsTable from "@/components/admin/projects/ProjectsTable";
 import { Link } from "@/i18n/navigation";
-import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
 import { getToken } from "@/lib/auth";
+import { adminFetch } from "@/lib/admin";
 
 export default async function AdminProjectsPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const token = await getToken();
-  let projects: Project[] | undefined = undefined;
-  try {
-    projects = await apiFetch<Project[]>("/api/admin/projects", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
-      const { locale } = await params;
-      return redirect(`/${locale}/admin/login`);
-    } else {
-      throw error;
-    }
-  }
+  const [token, { locale }] = await Promise.all([getToken(), params]);
+  const projects = await adminFetch(
+    () =>
+      apiFetch<Project[]>("/api/admin/projects", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    locale,
+  );
 
   return (
     <div>

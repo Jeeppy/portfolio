@@ -1,11 +1,17 @@
 import ProfileForm from "@/components/admin/profile/ProfileForm";
+import { adminFetch } from "@/lib/admin";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Profile } from "@/types/api";
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const [profile, token] = await Promise.all([
-    apiFetch<Profile>("/api/profile"),
+    adminFetch(() => apiFetch<Profile>("/api/profile"), locale),
     getToken(),
   ]);
 

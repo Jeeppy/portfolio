@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+import { adminFetch } from "@/lib/admin";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import {
@@ -10,19 +11,32 @@ import {
 } from "@/types/api";
 import { Briefcase, FolderOpen, GraduationCap, Wrench } from "lucide-react";
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const token = await getToken();
+  const { locale } = await params;
   const [projects, skills, experiences, education, messages] =
     await Promise.all([
-      apiFetch<Project[]>("/api/admin/projects", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      apiFetch<Skill[]>("/api/skills"),
-      apiFetch<Experience[]>("/api/experiences"),
-      apiFetch<Education[]>("/api/education"),
-      apiFetch<ContactMessage[]>("/api/admin/contact", {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      adminFetch(
+        () =>
+          apiFetch<Project[]>("/api/admin/projects", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        locale,
+      ),
+      adminFetch(() => apiFetch<Skill[]>("/api/skills"), locale),
+      adminFetch(() => apiFetch<Experience[]>("/api/experiences"), locale),
+      adminFetch(() => apiFetch<Education[]>("/api/education"), locale),
+      adminFetch(
+        () =>
+          apiFetch<ContactMessage[]>("/api/admin/contact", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        locale,
+      ),
     ]);
   const unread = messages
     .filter((m) => !m.read)

@@ -1,4 +1,5 @@
 import SkillForm from "@/components/admin/skills/SkillForm";
+import { adminFetch } from "@/lib/admin";
 import { ApiError, apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Skill } from "@/types/api";
@@ -7,12 +8,15 @@ import { notFound } from "next/navigation";
 export default async function EditSkillPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }) {
-  const token = await getToken();
+  const [token, { locale, id }] = await Promise.all([getToken(), params]);
   let skill: Skill | undefined = undefined;
   try {
-    skill = await apiFetch<Skill>(`/api/skills/${(await params).id}`);
+    skill = await adminFetch(
+      () => apiFetch<Skill>(`/api/skills/${id}`),
+      locale,
+    );
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return notFound();

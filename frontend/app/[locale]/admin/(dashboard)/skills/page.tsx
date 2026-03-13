@@ -4,13 +4,23 @@ import { getToken } from "@/lib/auth";
 import { Skill } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
+import { adminFetch } from "@/lib/admin";
 
-export default async function AdminSkillsPage() {
-  const skills = await apiFetch<Skill[]>("/api/skills");
+export default async function AdminSkillsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const token = await getToken();
+  const skills = await adminFetch(
+    () => apiFetch<Skill[]>("/api/skills"),
+    locale,
+  );
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold text-slate-800">Compétences</h1>
-      <SkillsTable skills={skills} token={await getToken()} />
+      <SkillsTable skills={skills} token={token} />
       <div className="mt-4 flex justify-end">
         <Link
           href="/admin/skills/new"
