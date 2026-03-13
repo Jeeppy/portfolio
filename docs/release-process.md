@@ -43,17 +43,17 @@ gh pr create \
 
 ```bash
 # backend/pyproject.toml → version = "X.Y.Z"
-# frontend/package.json  → "version": "X.Y.Z"
+# (frontend/package.json ne supporte pas le format calendaire — ne pas modifier)
 
 git cliff --tag vX.Y.Z --unreleased >> CHANGELOG.md
 # Éditer CHANGELOG.md pour placer la nouvelle section en tête du fichier
 
-git add backend/pyproject.toml frontend/package.json CHANGELOG.md
+git add backend/pyproject.toml CHANGELOG.md
 git commit -m "chore(release): bump version to vX.Y.Z"
 git push origin develop
 ```
 
-> Le format de version dans les fichiers est sans le `v` : `2026.3.0` (pas `v2026.3.0`).
+> Le format de version est sans le `v` : `2026.3.0` (pas `v2026.3.0`).
 
 ---
 
