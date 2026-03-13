@@ -78,8 +78,7 @@ async def upload_avatar(
 ) -> Profile:
     """Upload or replace the profile avatar (admin only)."""
     profile = get_or_create_profile(session)
-    if profile.avatar_filename:
-        file_uploads.delete_file(file_uploads.AVATAR_DIR, profile.avatar_filename)
+    old_filename = profile.avatar_filename
     filename = await file_uploads.save_upload(
         file,
         file_uploads.AVATAR_DIR,
@@ -90,6 +89,8 @@ async def upload_avatar(
     session.add(profile)
     session.commit()
     session.refresh(profile)
+    if old_filename:
+        file_uploads.delete_file(file_uploads.AVATAR_DIR, old_filename)
     logger.info("Avatar uploaded", profile_id=profile.id, filename=filename)
     return profile
 
@@ -119,8 +120,7 @@ async def upload_resume(
 ) -> Profile:
     """Upload or replace the profile resume (admin only)."""
     profile = get_or_create_profile(session)
-    if profile.resume_filename:
-        file_uploads.delete_file(file_uploads.RESUME_DIR, profile.resume_filename)
+    old_filename = profile.resume_filename
     filename = await file_uploads.save_upload(
         file,
         file_uploads.RESUME_DIR,
@@ -131,6 +131,8 @@ async def upload_resume(
     session.add(profile)
     session.commit()
     session.refresh(profile)
+    if old_filename:
+        file_uploads.delete_file(file_uploads.RESUME_DIR, old_filename)
     logger.info("Resume uploaded", profile_id=profile.id, filename=filename)
     return profile
 
