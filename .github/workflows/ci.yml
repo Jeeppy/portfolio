@@ -70,6 +70,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
   deploy-staging:
     needs: [backend, frontend]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
