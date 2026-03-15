@@ -48,6 +48,28 @@ def test_list_experiences(client: TestClient, experience: Experience) -> None:
     assert data[0]["start_date"] == "2022-01-01"
 
 
+def test_list_experiences_sorted_by_date_descending(
+    client: TestClient, experience: Experience, session: Session
+) -> None:
+    second_experience = Experience(
+        company="Python company",
+        position="backend developer",
+        start_date=date(2023, 1, 1),
+        profile_id=experience.profile_id,
+    )
+    session.add(second_experience)
+    session.commit()
+
+    response = client.get(EXPERIENCE_URL)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["company"] == "Python company"
+    assert data[1]["company"] == "Acme"
+
+
 def test_get_experience(client: TestClient, experience: Experience) -> None:
     response = client.get(f"{EXPERIENCE_URL}/{experience.id}")
 
