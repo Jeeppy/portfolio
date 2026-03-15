@@ -9,21 +9,17 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        language: [python, javascript-typescript]
     permissions:
       security-events: write
       actions: read
       contents: read
     steps:
       - uses: actions/checkout@v5
-      - uses: github/codeql-action/init@v4
-        name: Initialize CodeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
         with:
-          languages: ${{ matrix.language }}
-      - uses: github/codeql-action/autobuild@v4
-        name: Build
-      - uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:${{ matrix.language }}"
+          languages: python, javascript-typescript
+      - name: Build
+        uses: github/codeql-action/autobuild@v4
+      - name: Analyse
+        uses: github/codeql-action/analyze@v4
