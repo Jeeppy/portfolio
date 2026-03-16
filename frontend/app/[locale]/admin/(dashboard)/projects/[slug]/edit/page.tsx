@@ -3,7 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { apiFetch, ApiError } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Project } from "@/types/api";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function EditProjectPage({
   params,
@@ -11,6 +11,8 @@ export default async function EditProjectPage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const [token, { locale, slug }] = await Promise.all([getToken(), params]);
+  if (!token) redirect(`/${locale}/admin/login`);
+
   let project: Project | undefined = undefined;
   try {
     project = await adminFetch(

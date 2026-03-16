@@ -3,7 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { ApiError, apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Education } from "@/types/api";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function EditEducationPage({
   params,
@@ -12,6 +12,8 @@ export default async function EditEducationPage({
 }) {
   const { locale, id } = await params;
   const token = await getToken();
+  if (!token) redirect(`/${locale}/admin/login`);
+
   let education: Education | undefined = undefined;
   try {
     education = await adminFetch(

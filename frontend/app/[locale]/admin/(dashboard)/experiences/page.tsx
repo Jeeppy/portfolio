@@ -5,6 +5,7 @@ import { Experience } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { adminFetch } from "@/lib/admin";
+import { redirect } from "next/navigation";
 
 export default async function ExperiencesPage({
   params,
@@ -16,6 +17,7 @@ export default async function ExperiencesPage({
     adminFetch(() => apiFetch<Experience[]>("/api/experiences"), locale),
     getToken(),
   ]);
+  if (!token) redirect(`/${locale}/admin/login`);
 
   return (
     <div>

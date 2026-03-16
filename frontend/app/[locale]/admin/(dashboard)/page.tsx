@@ -11,6 +11,7 @@ import {
   Skill,
 } from "@/types/api";
 import { Briefcase, FolderOpen, GraduationCap, Wrench } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function AdminPage({
   params,
@@ -19,6 +20,8 @@ export default async function AdminPage({
 }) {
   const token = await getToken();
   const { locale } = await params;
+  if (!token) redirect(`/${locale}/admin/login`);
+
   const [projects, skills, experiences, education, messages] =
     await Promise.all([
       adminFetch(

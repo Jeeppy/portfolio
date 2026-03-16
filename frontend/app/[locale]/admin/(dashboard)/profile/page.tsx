@@ -3,6 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Profile } from "@/types/api";
+import { redirect } from "next/navigation";
 
 export default async function ProfilePage({
   params,
@@ -14,6 +15,7 @@ export default async function ProfilePage({
     adminFetch(() => apiFetch<Profile>("/api/profile"), locale),
     getToken(),
   ]);
+  if (!token) redirect(`/${locale}/admin/login`);
 
   return (
     <div>
