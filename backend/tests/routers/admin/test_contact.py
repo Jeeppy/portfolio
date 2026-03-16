@@ -43,6 +43,48 @@ def test_list_messages_without_auth(client: TestClient) -> None:
     assert response.status_code == 401
 
 
+def test_list_messages_filter_unread(
+    admin_client: TestClient, session: Session
+) -> None:
+    session.add(
+        ContactMessage(
+            name="a", email="a@test.com", subject="s", message="m", read=True
+        )
+    )
+    session.add(
+        ContactMessage(
+            name="b", email="b@test.com", subject="s", message="m", read=False
+        )
+    )
+    session.commit()
+
+    response = admin_client.get(f"{ADMIN_CONTACT_URL}?read=false")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "b"
+
+
+def test_list_messages_filter_read(admin_client: TestClient, session: Session) -> None:
+    session.add(
+        ContactMessage(
+            name="a", email="a@test.com", subject="s", message="m", read=True
+        )
+    )
+    session.add(
+        ContactMessage(
+            name="b", email="b@test.com", subject="s", message="m", read=False
+        )
+    )
+    session.commit()
+
+    response = admin_client.get(f"{ADMIN_CONTACT_URL}?read=true")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "a"
+
+
 def test_mark_as_read(
     session: Session,
     admin_client: TestClient,
