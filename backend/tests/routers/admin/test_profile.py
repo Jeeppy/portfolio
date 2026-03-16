@@ -1,7 +1,6 @@
 from datetime import date
 from pathlib import Path
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
@@ -11,12 +10,6 @@ from app.models import Skill, SocialLink
 ADMIN_PROFILE_URL = "/api/admin/profile"
 AVATAR_URL = f"{ADMIN_PROFILE_URL}/avatar"
 RESUME_URL = f"{ADMIN_PROFILE_URL}/resume"
-
-
-@pytest.fixture
-def upload_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(file_uploads, "AVATAR_DIR", tmp_path / "avatars")
-    monkeypatch.setattr(file_uploads, "RESUME_DIR", tmp_path / "resumes")
 
 
 def test_update_profile(admin_client: TestClient) -> None:

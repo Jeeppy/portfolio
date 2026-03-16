@@ -1,21 +1,9 @@
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.models import ContactMessage
 
 CONTACT_URL = "/api/contact"
-
-
-@pytest.fixture
-def message(session: Session) -> ContactMessage:
-    message = ContactMessage(
-        name="first", email="first@test.com", subject="sub 1", message="message 1"
-    )
-    session.add(message)
-    session.commit()
-    session.refresh(message)
-    return message
 
 
 def test_send_message(client: TestClient, session: Session) -> None:

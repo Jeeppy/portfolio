@@ -1,25 +1,9 @@
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app.models import Profile, Skill
+from app.models import Skill
 
 ADMIN_SKILL_URL = "/api/admin/skills"
-
-
-@pytest.fixture
-def skill(session: Session) -> Skill:
-    profile = Profile()
-    session.add(profile)
-    session.commit()
-    session.refresh(profile)
-
-    skill = Skill(name="Python", category="Backend", level=9, profile_id=profile.id)
-    session.add(skill)
-    session.commit()
-    session.refresh(skill)
-
-    return skill
 
 
 def test_create_skill(admin_client: TestClient, session: Session) -> None:
