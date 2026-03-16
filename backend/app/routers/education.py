@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 import structlog
 from fastapi import APIRouter, Depends
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from app.database import get_session
 from app.models import Education
@@ -16,7 +16,7 @@ logger = structlog.get_logger()
 @router.get("", response_model=list[EducationRead])
 def list_educations(session: Session = Depends(get_session)) -> Sequence[Education]:
     """List all educations."""
-    return session.exec(select(Education)).all()
+    return session.exec(select(Education).order_by(col(Education.year).desc())).all()
 
 
 @router.get("/{id}", response_model=EducationRead)

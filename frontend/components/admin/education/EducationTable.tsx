@@ -50,44 +50,59 @@ export default function EducationTable({
             </tr>
           </thead>
           <tbody>
-            {educations.map((education) => (
-              <tr
-                key={education.id}
-                className="border-t border-slate-200 hover:bg-slate-100"
-              >
-                <td className="px-4 py-3 text-slate-700">{education.id}</td>
-                <td className="px-4 py-3 text-slate-700">{education.school}</td>
-                <td className="px-4 py-3 text-slate-700">{education.degree}</td>
-                <td className="px-4 py-3 text-slate-700">
-                  {education.location}
-                </td>
-                <td className="px-4 py-3 text-slate-700">{education.year}</td>
-                <td className="px-4 py-3 text-slate-700">
-                  {education.is_alternance ? (
-                    <Check size={15} />
-                  ) : (
-                    <Minus size={15} />
-                  )}
-                </td>
-
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Link
-                      href={`/admin/education/${education.id}/edit`}
-                      className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
-                    >
-                      <Pencil size={15} />
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(education)}
-                      className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
+            {educations.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="px-4 py-8 text-center text-sm text-slate-400"
+                >
+                  Aucune formation
                 </td>
               </tr>
-            ))}
+            ) : (
+              educations.map((education) => (
+                <tr
+                  key={education.id}
+                  className="border-t border-slate-200 hover:bg-slate-100"
+                >
+                  <td className="px-4 py-3 text-slate-700">{education.id}</td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {education.school}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {education.degree}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {education.location}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">{education.year}</td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {education.is_alternance ? (
+                      <Check size={15} />
+                    ) : (
+                      <Minus size={15} />
+                    )}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/admin/education/${education.id}/edit`}
+                        className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                      >
+                        <Pencil size={15} />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(education)}
+                        className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

@@ -10,13 +10,16 @@ export function proxy(request: NextRequest) {
   const isAdminRoute = routing.locales.some((locale) =>
     pathname.startsWith(`/${locale}/admin`),
   );
+  const isLoginPage = routing.locales.some(
+    (locale) => pathname === `/${locale}/admin/login`,
+  );
 
-  if (isAdminRoute) {
+  if (isAdminRoute && !isLoginPage) {
     if (pathname.endsWith("/admin/login")) {
       return NextResponse.next();
     }
 
-    const token = request.cookies.get("token");
+    const token = request.cookies.get("token")?.value;
     if (!token) {
       const locale = pathname.split("/")[1];
       return NextResponse.redirect(

@@ -1,21 +1,9 @@
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.models import ContactMessage
 
 ADMIN_CONTACT_URL = "/api/admin/contact"
-
-
-@pytest.fixture
-def message(session: Session) -> ContactMessage:
-    message = ContactMessage(
-        name="first", email="first@test.com", subject="sub 1", message="message 1"
-    )
-    session.add(message)
-    session.commit()
-    session.refresh(message)
-    return message
 
 
 def test_list_messages_admin(
@@ -43,8 +31,8 @@ def test_list_messages_admin(
 
     data = response.json()
     assert len(data) == 2
-    assert data[0]["name"] == "first"
-    assert data[1]["name"] == "second"
+    assert data[0]["name"] == "second"
+    assert data[1]["name"] == "first"
     assert "id" in data[0]
     assert "read" in data[0]
     assert "created_at" in data[0]
@@ -53,6 +41,48 @@ def test_list_messages_admin(
 def test_list_messages_without_auth(client: TestClient) -> None:
     response = client.get(ADMIN_CONTACT_URL)
     assert response.status_code == 401
+
+
+def test_list_messages_filter_unread(
+    admin_client: TestClient, session: Session
+) -> None:
+    session.add(
+        ContactMessage(
+            name="a", email="a@test.com", subject="s", message="m", read=True
+        )
+    )
+    session.add(
+        ContactMessage(
+            name="b", email="b@test.com", subject="s", message="m", read=False
+        )
+    )
+    session.commit()
+
+    response = admin_client.get(f"{ADMIN_CONTACT_URL}?read=false")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "b"
+
+
+def test_list_messages_filter_read(admin_client: TestClient, session: Session) -> None:
+    session.add(
+        ContactMessage(
+            name="a", email="a@test.com", subject="s", message="m", read=True
+        )
+    )
+    session.add(
+        ContactMessage(
+            name="b", email="b@test.com", subject="s", message="m", read=False
+        )
+    )
+    session.commit()
+
+    response = admin_client.get(f"{ADMIN_CONTACT_URL}?read=true")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "a"
 
 
 def test_mark_as_read(

@@ -1,3 +1,27 @@
+## [2026.3.2] - 2026-03-16
+
+### 🚀 Features
+
+- *(frontend)* Add public education page
+- *(frontend)* Add empty state to admin tables
+- *(frontend)* Improve terminal mockup with Python logo and experiences
+- *(backend)* Add read status filter on GET /api/admin/contact
+
+### 🐛 Bug Fixes
+
+- *(backend)* Sort experiences by date descending
+- *(frontend)* Redirect to login if token is absent in admin pages
+- *(frontend)* Add middleware to redirect unauthenticated admin request
+
+### 🚜 Refactor
+
+- *(frontend)* Extract reusable StatCard component for dashboard
+- *(backend)* Centralize experience and education fixtures in conftest.py
+
+### ⚡ Performance
+
+- Sort contact messages by date descending on backend
+
 ## [2026.3.1] - 2026-03-13
 
   ### 🐛 Bug Fixes

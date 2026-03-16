@@ -1,32 +1,11 @@
 from datetime import date
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from app.models import Experience, Profile
+from app.models import Experience
 
 EXPERIENCE_URL = "/api/experiences"
-
-
-@pytest.fixture
-def experience(session: Session) -> Experience:
-    profile = Profile()
-    session.add(profile)
-    session.commit()
-    session.refresh(profile)
-
-    experience = Experience(
-        company="Acme",
-        position="backend developer",
-        start_date=date(2022, 1, 1),
-        profile_id=profile.id,
-    )
-    session.add(experience)
-    session.commit()
-    session.refresh(experience)
-
-    return experience
 
 
 def test_list_experience_empty(client: TestClient) -> None:
@@ -46,6 +25,28 @@ def test_list_experiences(client: TestClient, experience: Experience) -> None:
     assert data[0]["company"] == "Acme"
     assert data[0]["position"] == "backend developer"
     assert data[0]["start_date"] == "2022-01-01"
+
+
+def test_list_experiences_sorted_by_date_descending(
+    client: TestClient, experience: Experience, session: Session
+) -> None:
+    second_experience = Experience(
+        company="Python company",
+        position="backend developer",
+        start_date=date(2023, 1, 1),
+        profile_id=experience.profile_id,
+    )
+    session.add(second_experience)
+    session.commit()
+
+    response = client.get(EXPERIENCE_URL)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["company"] == "Python company"
+    assert data[1]["company"] == "Acme"
 
 
 def test_get_experience(client: TestClient, experience: Experience) -> None:

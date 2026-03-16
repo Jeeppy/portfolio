@@ -15,6 +15,7 @@ export default function Nav() {
     { href: "/projects", label: t("projects") },
     { href: "/skills", label: t("skills") },
     { href: "/experiences", label: t("experiences") },
+    { href: "/education", label: t("education") },
     { href: "/contact", label: t("contact") },
   ];
   const pathname = usePathname();

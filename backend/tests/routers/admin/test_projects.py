@@ -1,40 +1,9 @@
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 from app.models import Project, Tag
 
 ADMIN_PROJECTS_URL = "api/admin/projects"
-
-
-@pytest.fixture
-def project(session: Session) -> Project:
-    project = Project(
-        title="a new project",
-        slug="a-new-project",
-        description="a description for a new project",
-        published=True,
-    )
-    session.add(project)
-    project.tags.append(Tag(name="python"))
-    project.tags.append(Tag(name="fastapi"))
-    session.commit()
-    session.refresh(project)
-    return project
-
-
-@pytest.fixture
-def unpublished_project(session: Session) -> Project:
-    unpublished = Project(
-        title="draft",
-        slug="draft",
-        description="wip",
-        published=False,
-    )
-    session.add(unpublished)
-    session.commit()
-    session.refresh(unpublished)
-    return unpublished
 
 
 def test_list_all_projects(

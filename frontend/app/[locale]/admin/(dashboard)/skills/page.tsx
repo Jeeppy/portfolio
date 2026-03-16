@@ -5,6 +5,7 @@ import { Skill } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { adminFetch } from "@/lib/admin";
+import { redirect } from "next/navigation";
 
 export default async function AdminSkillsPage({
   params,
@@ -13,6 +14,8 @@ export default async function AdminSkillsPage({
 }) {
   const { locale } = await params;
   const token = await getToken();
+  if (!token) redirect(`/${locale}/admin/login`);
+
   const skills = await adminFetch(
     () => apiFetch<Skill[]>("/api/skills"),
     locale,
