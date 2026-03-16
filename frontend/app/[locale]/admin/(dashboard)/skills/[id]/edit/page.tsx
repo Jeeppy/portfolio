@@ -3,7 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { ApiError, apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Skill } from "@/types/api";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function EditSkillPage({
   params,
@@ -11,6 +11,7 @@ export default async function EditSkillPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const [token, { locale, id }] = await Promise.all([getToken(), params]);
+  if (!token) redirect(`/${locale}/admin/login`);
   let skill: Skill | undefined = undefined;
   try {
     skill = await adminFetch(

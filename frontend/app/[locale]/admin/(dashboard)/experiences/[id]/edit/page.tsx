@@ -3,7 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { ApiError, apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { Experience } from "@/types/api";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function EditExperiencePage({
   params,
@@ -11,6 +11,8 @@ export default async function EditExperiencePage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const [token, { locale, id }] = await Promise.all([getToken(), params]);
+  if (!token) redirect(`/${locale}/admin/login`);
+
   let experience: Experience | undefined = undefined;
   try {
     experience = await adminFetch(

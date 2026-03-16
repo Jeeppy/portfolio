@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import EducationTable from "@/components/admin/education/EducationTable";
 import { adminFetch } from "@/lib/admin";
+import { redirect } from "next/navigation";
 
 export default async function EducationPage({
   params,
@@ -16,6 +17,7 @@ export default async function EducationPage({
     adminFetch(() => apiFetch<Education[]>("/api/education"), locale),
     getToken(),
   ]);
+  if (!token) redirect(`/${locale}/admin/login`);
 
   return (
     <div>

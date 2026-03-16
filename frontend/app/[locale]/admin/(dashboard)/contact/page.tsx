@@ -3,6 +3,7 @@ import { adminFetch } from "@/lib/admin";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { ContactMessage } from "@/types/api";
+import { redirect } from "next/navigation";
 
 export default async function ContactPage({
   params,
@@ -10,6 +11,8 @@ export default async function ContactPage({
   params: Promise<{ locale: string }>;
 }) {
   const [token, { locale }] = await Promise.all([getToken(), params]);
+  if (!token) redirect(`/${locale}/admin/login`);
+
   const messages = await adminFetch(
     () =>
       apiFetch<ContactMessage[]>("/api/admin/contact", {

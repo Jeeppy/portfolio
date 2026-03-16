@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { getToken } from "@/lib/auth";
 import { adminFetch } from "@/lib/admin";
+import { redirect } from "next/navigation";
 
 export default async function AdminProjectsPage({
   params,
@@ -12,6 +13,8 @@ export default async function AdminProjectsPage({
   params: Promise<{ locale: string }>;
 }) {
   const [token, { locale }] = await Promise.all([getToken(), params]);
+  if (!token) redirect(`/${locale}/admin/login`);
+
   const projects = await adminFetch(
     () =>
       apiFetch<Project[]>("/api/admin/projects", {
