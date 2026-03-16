@@ -7,7 +7,7 @@ export default async function NewExperiencePage({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const [token, locale] = await Promise.all([getToken(), params]);
+  const [token, { locale }] = await Promise.all([getToken(), params]);
   if (!token) redirect(`/${locale}/admin/login`);
 
   return (
