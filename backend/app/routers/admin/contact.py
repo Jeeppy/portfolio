@@ -18,6 +18,7 @@ logger = structlog.get_logger()
 def list_messages(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=100),
+    read: bool | None = Query(default=None),
     session: Session = Depends(get_session),
     _: str = Depends(get_current_admin),
 ) -> Sequence[ContactMessage]:
@@ -25,14 +26,18 @@ def list_messages(
 
     Soft-deleted messages are excluded.
     Supports pagination via `offset` and `limit` (max 100).
+    Supports filterings by read status via `read` (true/false).
     """
-    return session.exec(
+    query = (
         select(ContactMessage)
         .where(ContactMessage.deleted_at == None)  # noqa: E711
         .order_by(col(ContactMessage.created_at).desc())
         .offset(offset)
         .limit(limit)
-    ).all()
+    )
+    if read is not None:
+        query = query.where(ContactMessage.read == read)
+    return session.exec(query).all()
 
 
 @router.patch("/{message_id}/read", response_model=ContactRead)

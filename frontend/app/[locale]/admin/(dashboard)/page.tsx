@@ -36,13 +36,12 @@ export default async function AdminPage({
       adminFetch(() => apiFetch<Education[]>("/api/education"), locale),
       adminFetch(
         () =>
-          apiFetch<ContactMessage[]>("/api/admin/contact", {
+          apiFetch<ContactMessage[]>("/api/admin/contact?read=false", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         locale,
       ),
     ]);
-  const unread = messages.filter((m) => !m.read);
 
   return (
     <div>
@@ -77,15 +76,15 @@ export default async function AdminPage({
         <h2 className="mb-3 text-lg font-semibold text-slate-800">
           Messages non lus{" "}
           <span className="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-sm text-red-600">
-            {unread.length}
+            {messages.length}
           </span>
         </h2>
         <div className="rounded-xl bg-white shadow-md">
-          {unread.length === 0 ? (
+          {messages.length === 0 ? (
             <p className="p-6 text-sm text-slate-400">Aucun message non lu.</p>
           ) : (
             <ul className="divide-y divide-slate-100">
-              {unread.map((message) => (
+              {messages.map((message) => (
                 <li key={message.id}>
                   <Link
                     href="/admin/contact"
