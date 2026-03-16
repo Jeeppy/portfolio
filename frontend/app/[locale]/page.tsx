@@ -1,15 +1,20 @@
 import { apiFetch } from "@/lib/api";
-import { Profile } from "@/types/api";
+import { Experience, Profile } from "@/types/api";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { FolderOpen, Mail } from "lucide-react";
 import PlatformIcon from "@/components/icons/PlatformIcon";
+import TerminalMockup from "@/components/TerminalMockup";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const t = await getTranslations("home");
-  const profile = await apiFetch<Profile>("/api/profile");
+  const [profile, experiences] = await Promise.all([
+    apiFetch<Profile>("/api/profile"),
+    apiFetch<Experience[]>("/api/experiences"),
+  ]);
+
   const socialLinks = profile.social_links.map((link) => (
     <li key={link.id}>
       <Link
@@ -51,70 +56,7 @@ export default async function Home() {
           </div>
           <ul className="mt-4 flex gap-4">{socialLinks}</ul>
         </div>
-
-        <div className="w-full flex-1">
-          <div className="overflow-hidden rounded-xl bg-gray-900 shadow-2xl">
-            <div className="flex items-center gap-2 bg-gray-800 px-4 py-3">
-              <span className="h-3 w-3 rounded-full bg-red-500" />
-              <span className="h-3 w-3 rounded-full bg-yellow-500" />
-              <span className="h-3 w-3 rounded-full bg-green-500" />
-              <span className="ml-3 text-xs text-gray-400">developer.py</span>
-            </div>
-            <div className="p-6 font-mono text-sm leading-7">
-              <p>
-                <span className="text-blue-300">developer: </span>
-                <span className="text-purple-300">dict[str, str]</span>
-                <span className="text-white"> =</span>
-                <span className="text-white">{" {"}</span>
-              </p>
-              <p className="pl-6">
-                <span className="text-green-300">
-                  {'"'}full_name{'"'}
-                </span>
-                <span className="text-white">: </span>
-                <span className="text-yellow-300">
-                  {'"'}
-                  {profile.full_name}
-                  {'"'}
-                </span>
-                <span className="text-white">,</span>
-              </p>
-              <p className="pl-6">
-                <span className="text-green-300">
-                  {'"'}title{'"'}
-                </span>
-                <span className="text-white">: </span>
-                <span className="text-yellow-300">
-                  {'"'}
-                  {profile.title}
-                  {'"'}
-                </span>
-                <span className="text-white">,</span>
-              </p>
-              <p className="pl-6">
-                <span className="text-green-300">
-                  {'"'}location{'"'}
-                </span>
-                <span className="text-white">: </span>
-                <span className="text-yellow-300">
-                  {'"'}
-                  {profile.location}
-                  {'"'}
-                </span>
-                <span className="text-white">,</span>
-              </p>
-              <p className="pl-6">
-                <span className="text-green-300">
-                  {'"'}available{'"'}
-                </span>
-                <span className="text-white">: </span>
-                <span className="text-orange-300">True</span>
-                <span className="text-white">,</span>
-              </p>
-              <p className="text-white">{"}"}</p>
-            </div>
-          </div>
-        </div>
+        <TerminalMockup profile={profile} experiences={experiences} />
       </div>
     </main>
   );
