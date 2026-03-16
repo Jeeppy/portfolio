@@ -1,6 +1,5 @@
 from datetime import date, time
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
@@ -8,16 +7,6 @@ from app.models import Appointment, AvailabilitySlot
 
 APPOINTMENTS_URL = "/api/appointments"
 AVAILABLE_URL = "/api/appointments/available"
-
-
-@pytest.fixture
-def slot(session: Session) -> AvailabilitySlot:
-    """Monday slot 09:00-10:00."""
-    s = AvailabilitySlot(day_of_week=0, start_time=time(9, 0), end_time=time(10, 0))
-    session.add(s)
-    session.commit()
-    session.refresh(s)
-    return s
 
 
 def next_weekday(weekday: int) -> date:

@@ -1,27 +1,8 @@
-from datetime import date, time, timedelta
-
-import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session
 
 from app.models import Appointment
 
 ADMIN_APPOINTMENTS_URL = "/api/admin/appointments"
-
-
-@pytest.fixture
-def appointment(session: Session) -> Appointment:
-    a = Appointment(
-        visitor_name="Bob",
-        visitor_email="bob@example.com",
-        appointment_date=date.today() + timedelta(days=7),
-        start_time=time(10, 0),
-        end_time=time(11, 0),
-    )
-    session.add(a)
-    session.commit()
-    session.refresh(a)
-    return a
 
 
 def test_list_appointments(admin_client: TestClient, appointment: Appointment) -> None:

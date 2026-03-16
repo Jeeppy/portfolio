@@ -1,32 +1,11 @@
 from datetime import date
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from app.models import Experience, Profile
+from app.models import Experience
 
 EXPERIENCE_URL = "/api/experiences"
-
-
-@pytest.fixture
-def experience(session: Session) -> Experience:
-    profile = Profile()
-    session.add(profile)
-    session.commit()
-    session.refresh(profile)
-
-    experience = Experience(
-        company="Acme",
-        position="backend developer",
-        start_date=date(2022, 1, 1),
-        profile_id=profile.id,
-    )
-    session.add(experience)
-    session.commit()
-    session.refresh(experience)
-
-    return experience
 
 
 def test_list_experience_empty(client: TestClient) -> None:
