@@ -5,7 +5,8 @@
     "projects": "Projets",
     "skills": "Compétences",
     "experiences": "Expériences",
-    "contact": "Contact"
+    "contact": "Contact",
+    "education": "Formations"
   },
   "skills": {
     "title": "Compétences",
@@ -34,5 +35,9 @@
   "home": {
     "contact-me": "Me contacter",
     "see-my-projects": "Voir mes projets"
+  },
+  "education": {
+    "title": "Formations",
+    "alternance": "Alternance"
   }
 }

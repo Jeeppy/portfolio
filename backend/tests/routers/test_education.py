@@ -46,6 +46,28 @@ def test_list_education(client: TestClient, education: Education) -> None:
     assert data[0]["year"] == 2022
 
 
+def test_list_education_sorted_by_year_descending(
+    client: TestClient, education: Education, session: Session
+) -> None:
+    second_education = Education(
+        school="Python school",
+        degree="Bachelor",
+        year=2023,
+        profile_id=education.profile_id,
+    )
+    session.add(second_education)
+    session.commit()
+
+    response = client.get(EDUCATION_URL)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["school"] == "Python school"
+    assert data[1]["school"] == "MIT"
+
+
 def test_get_education(client: TestClient, education: Education) -> None:
     response = client.get(f"{EDUCATION_URL}/{education.id}")
 
