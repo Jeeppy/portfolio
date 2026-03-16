@@ -43,8 +43,8 @@ def test_list_messages_admin(
 
     data = response.json()
     assert len(data) == 2
-    assert data[0]["name"] == "first"
-    assert data[1]["name"] == "second"
+    assert data[0]["name"] == "second"
+    assert data[1]["name"] == "first"
     assert "id" in data[0]
     assert "read" in data[0]
     assert "created_at" in data[0]
