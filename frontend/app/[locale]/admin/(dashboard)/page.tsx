@@ -1,3 +1,4 @@
+import StatCard from "@/components/admin/StatCard";
 import { Link } from "@/i18n/navigation";
 import { adminFetch } from "@/lib/admin";
 import { apiFetch } from "@/lib/api";
@@ -46,50 +47,30 @@ export default async function AdminPage({
     <div>
       <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
       <div className="mt-8 grid grid-cols-2 gap-4 px-4 py-4 sm:px-8 lg:grid-cols-4">
-        <div className="flex items-center overflow-hidden rounded-xl bg-white shadow-md">
-          <div className="flex items-center self-stretch bg-green-400 p-4 text-white">
-            <FolderOpen size={22} />
-          </div>
-          <div className="px-4 py-4 text-gray-700">
-            <h3 className="text-xs font-medium tracking-widest text-gray-500 uppercase">
-              Projets
-            </h3>
-            <p className="text-3xl font-bold">{projects.length}</p>
-          </div>
-        </div>
-        <div className="flex items-center overflow-hidden rounded-xl bg-white shadow-md">
-          <div className="flex items-center self-stretch bg-blue-400 p-4 text-white">
-            <Wrench size={22} />
-          </div>
-          <div className="px-4 py-4 text-gray-700">
-            <h3 className="text-xs font-medium tracking-widest text-gray-500 uppercase">
-              Compétences
-            </h3>
-            <p className="text-3xl font-bold">{skills.length}</p>
-          </div>
-        </div>
-        <div className="flex items-center overflow-hidden rounded-xl bg-white shadow-md">
-          <div className="flex items-center self-stretch bg-violet-400 p-4 text-white">
-            <Briefcase size={22} />
-          </div>
-          <div className="px-4 py-4 text-gray-700">
-            <h3 className="text-xs font-medium tracking-widest text-gray-500 uppercase">
-              Expériences
-            </h3>
-            <p className="text-3xl font-bold">{experiences.length}</p>
-          </div>
-        </div>
-        <div className="flex items-center overflow-hidden rounded-xl bg-white shadow-md">
-          <div className="flex items-center self-stretch bg-amber-400 p-4 text-white">
-            <GraduationCap size={22} />
-          </div>
-          <div className="px-4 py-4 text-gray-700">
-            <h3 className="text-xs font-medium tracking-widest text-gray-500 uppercase">
-              Formations
-            </h3>
-            <p className="text-3xl font-bold">{education.length}</p>
-          </div>
-        </div>
+        <StatCard
+          Icon={FolderOpen}
+          color="bg-green-400"
+          label="Projets"
+          count={projects.length}
+        />
+        <StatCard
+          Icon={Wrench}
+          color="bg-blue-400"
+          label="Compétences"
+          count={skills.length}
+        />
+        <StatCard
+          Icon={Briefcase}
+          color="bg-violet-400"
+          label="Expériences"
+          count={experiences.length}
+        />
+        <StatCard
+          Icon={GraduationCap}
+          color="bg-amber-400"
+          label="Formations"
+          count={education.length}
+        />
       </div>
       <div className="mt-6">
         <h2 className="mb-3 text-lg font-semibold text-slate-800">
