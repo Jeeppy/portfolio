@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from app.auth import get_current_admin
 from app.database import get_session
@@ -29,6 +29,7 @@ def list_messages(
     return session.exec(
         select(ContactMessage)
         .where(ContactMessage.deleted_at == None)  # noqa: E711
+        .order_by(col(ContactMessage.created_at).desc())
         .offset(offset)
         .limit(limit)
     ).all()

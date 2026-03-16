@@ -39,9 +39,7 @@ export default async function AdminPage({
         locale,
       ),
     ]);
-  const unread = messages
-    .filter((m) => !m.read)
-    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  const unread = messages.filter((m) => !m.read);
 
   return (
     <div>
