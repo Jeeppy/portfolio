@@ -2,6 +2,8 @@ import { apiFetch } from "@/lib/api";
 import { Education } from "@/types/api";
 import { getTranslations } from "next-intl/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function EducationPage() {
   const [educations, t] = await Promise.all([
     apiFetch<Education[]>("/api/education"),

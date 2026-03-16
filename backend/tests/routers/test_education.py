@@ -46,7 +46,7 @@ def test_list_education(client: TestClient, education: Education) -> None:
     assert data[0]["year"] == 2022
 
 
-def test_list_experiences_sorted_by_date_descending(
+def test_list_education_sorted_by_date_descending(
     client: TestClient, education: Education, session: Session
 ) -> None:
     second_education = Education(
